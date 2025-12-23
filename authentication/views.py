@@ -2,14 +2,14 @@ from django.contrib.auth import authenticate
 from rest_framework.generics import CreateAPIView
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from drf_spectacular.utils import extend_schema
 from users.models import User
 from users.serializer import UserSerializer
-from authentication.serializers import LoginSerializer, OTPVerificationSerializer
+from authentication.serializers import ForgetPasswordSerializer, LoginSerializer, OTPVerificationSerializer
 from authentication.models import OTP
 
 
@@ -38,8 +38,8 @@ class UserRegisterView(CreateAPIView):
     otp = OTP.create_otp(user, expiry_minutes=10)
     
     # TODO: Send OTP via email (we'll implement this later)
-    # For now, we'll return it in the response (remove this in production!)
-    print(f"OTP for {user.email}: {otp.code}")  # Remove in production!
+    # For now, using fixed OTP code: 123456
+    # print(f"OTP for {user.email}: {otp.code}")  # Development only
 
     return Response({
       'message': 'User registered successfully. Please check your email for OTP verification code.',
@@ -47,8 +47,6 @@ class UserRegisterView(CreateAPIView):
         'id': user.id,
         'email': user.email,
       },
-      # Remove this in production - only for development/testing
-      'otp_code': otp.code if request.data.get('debug', False) else None,
     }, status=status.HTTP_201_CREATED)
 
 
@@ -157,6 +155,57 @@ class OTPVerificationView(APIView):
     else:
       return Response(
         {'error': 'Failed to verify OTP'},
+        status=status.HTTP_400_BAD_REQUEST
+      )
+
+
+
+#  forget password
+class UserForgetPasswordView(APIView):
+  permission_classes = [AllowAny]
+  serializer_class = ForgetPasswordSerializer # serializer to validate the data
+
+  def post(self, request):
+    serializer = self.serializer_class(data=request.data)
+    serializer.is_valid(raise_exception=True) # raise an exception if the data is not valid
+    user = serializer.save() # save the user
+    return Response(
+      {
+        'message': 'Password reset successfully',
+        'email': user.email  # Just return email, not full user object
+      },
+      status=status.HTTP_200_OK
+    )
+
+
+# Logout View
+@extend_schema(
+  tags=['Authentication'],
+  summary="Logout User",
+  description="Logout a user. Invalidates the refresh token.",
+)
+class UserLogoutView(APIView):
+  permission_classes = [IsAuthenticated]
+  serializer_class = None
+
+  def post(self, request):
+    refresh_token = request.data.get('refresh')
+    if refresh_token:
+      try:
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response(
+          {'message': 'Logged out successfully'},
+          status=status.HTTP_200_OK
+        )
+      except Exception as e:
+        return Response(
+          {'error': str(e)},
+          status=status.HTTP_400_BAD_REQUEST
+        )
+    else:
+      return Response(
+        {'error': 'Refresh token is required'},
         status=status.HTTP_400_BAD_REQUEST
       )
 
