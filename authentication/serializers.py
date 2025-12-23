@@ -47,3 +47,39 @@ class ResetPasswordSerializer(serializers.Serializer):
     return value
 
   
+  #  Delete Account Serializer
+class DeleteAccountSerializer(serializers.Serializer):
+  email = serializers.EmailField(required=True, help_text="User email address")
+  password = serializers.CharField(required=True, write_only=True, style={'input_type': 'password'}, help_text="User password")
+  confirm_password = serializers.CharField(required=True, write_only=True, style={'input_type': 'password'}, help_text="Confirm user password")
+
+  def validate(self, attrs):
+    if attrs['password'] != attrs['confirm_password']:
+      raise serializers.ValidationError("Passwords do not match")
+    return attrs
+
+  def validate_email(self, value):
+    """Check if user with this email exists"""
+    try:
+      User.objects.get(email=value)
+    except User.DoesNotExist:
+      raise serializers.ValidationError("User with this email does not exist")
+    return value
+
+  def delete_account(self, request):
+    """Delete user account"""
+    user = self.context['request'].user
+    email = user.email
+    
+    # Optional: Soft delete instead of hard delete
+    # user.is_active = False
+    # user.deleted_at = timezone.now()
+    # user.save()
+    
+    # Hard delete
+    user.delete()
+    
+    return {
+        'message': 'Account deleted successfully',
+        'email': email
+    }

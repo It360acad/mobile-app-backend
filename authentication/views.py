@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from drf_spectacular.utils import extend_schema
 from users.models import User
 from users.serializer import UserSerializer
-from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer
+from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer, DeleteAccountSerializer
 from authentication.models import OTP
 
 
@@ -316,6 +316,31 @@ class UserEmailExistsView(APIView):
       return Response ({'exists': True}, status=status.HTTP_200_OK) # return True 
     else: # if the email does not exist in the database
       return Response({'exists': False}, status=status.HTTP_200_OK) # return False
+
+
+# Delete Account View
+@extend_schema(
+  request=DeleteAccountSerializer,
+  tags=['Authentication'],
+  summary="Delete Account",
+  description="Delete a user's account.",
+)
+class UserDeleteAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = DeleteAccountSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(
+            data=request.data, 
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        
+        result = serializer.delete_account()
+        
+        return Response(result, status=status.HTTP_200_OK)
+
+
 
 # Custom Token Refresh View with Authentication tag
 @extend_schema(
