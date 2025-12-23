@@ -30,10 +30,8 @@ class OTP(models.Model):
     
     @staticmethod
     def generate_code():
-        """Generate a 6-digit OTP code"""
-        # TODO: For development, using fixed code. Change to random in production:
-        # return ''.join(random.choices(string.digits, k=6))
-        return '123456'
+        """Generate a random 6-digit OTP code"""
+        return ''.join(random.choices(string.digits, k=6))
     
     @staticmethod
     def create_otp(user, expiry_minutes=10):

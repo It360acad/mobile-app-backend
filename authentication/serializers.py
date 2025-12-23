@@ -13,6 +13,25 @@ class OTPVerificationSerializer(serializers.Serializer):
   code = serializers.CharField(required=True, min_length=6, max_length=6, help_text="6-digit OTP code")
 
 
+# Resend OTP Serializer
+class ResendOTPSerializer(serializers.Serializer):
+  email = serializers.EmailField(required=True, help_text="User email address")
+  otp_type = serializers.ChoiceField(
+    choices=[('registration', 'Registration'), ('password_reset', 'Password Reset')],
+    required=False,
+    default='registration',
+    help_text="Type of OTP to resend: 'registration' or 'password_reset'"
+  )
+
+  def validate_email(self, value):
+    """Check if user with this email exists"""
+    try:
+      User.objects.get(email=value)
+    except User.DoesNotExist:
+      raise serializers.ValidationError("User with this email does not exist")
+    return value
+
+
 # Forget Password Serializer - Request OTP for password reset
 class ForgetPasswordSerializer(serializers.Serializer):
   email = serializers.EmailField(required=True, help_text="User email address")

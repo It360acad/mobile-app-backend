@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from drf_spectacular.utils import extend_schema
 from users.models import User
 from users.serializer import UserSerializer
-from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer, DeleteAccountSerializer
+from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer, DeleteAccountSerializer, ResendOTPSerializer
 from authentication.models import OTP
 
 
@@ -38,8 +38,8 @@ class UserRegisterView(CreateAPIView):
     otp = OTP.create_otp(user, expiry_minutes=10)
     
     # TODO: Send OTP via email (we'll implement this later)
-    # For now, using fixed OTP code: 123456
-    # print(f"OTP for {user.email}: {otp.code}")  # Development only
+    # For development/testing, you can log the OTP:
+    # print(f"OTP for {user.email}: {otp.code}")  # Development only - remove in production
 
     return Response({
       'message': 'User registered successfully. Please check your email for OTP verification code.',
@@ -188,8 +188,8 @@ class UserForgetPasswordView(APIView):
     otp = OTP.create_otp(user, expiry_minutes=15)  # 15 minutes expiry for password reset
     
     # TODO: Send OTP via email (we'll implement this later)
-    # For now, using fixed OTP code: 123456
-    # print(f"Password Reset OTP for {user.email}: {otp.code}")  # Development only
+    # For development/testing, you can log the OTP:
+    # print(f"Password Reset OTP for {user.email}: {otp.code}")  # Development only - remove in production
     
     return Response(
       {
@@ -316,6 +316,57 @@ class UserEmailExistsView(APIView):
       return Response ({'exists': True}, status=status.HTTP_200_OK) # return True 
     else: # if the email does not exist in the database
       return Response({'exists': False}, status=status.HTTP_200_OK) # return False
+
+
+# Resend OTP View
+@extend_schema(
+  request=ResendOTPSerializer,
+  tags=['Authentication'],
+  summary="Resend OTP",
+  description="Resend OTP code to user's email. Can be used for registration or password reset.",
+)
+class UserResendOtpView(APIView):
+  permission_classes = [AllowAny]
+  serializer_class = ResendOTPSerializer
+
+  def post(self, request):
+    serializer = self.serializer_class(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    
+    email = serializer.validated_data.get('email')
+    otp_type = serializer.validated_data.get('otp_type', 'registration')
+    
+    try:
+      user = User.objects.get(email=email)
+    except User.DoesNotExist:
+      return Response(
+        {'error': 'User with this email does not exist'},
+        status=status.HTTP_404_NOT_FOUND
+      )
+    
+    # Determine expiry time based on OTP type
+    if otp_type == 'password_reset':
+      expiry_minutes = 15
+      message = 'Password reset OTP has been resent to your email. Please check your inbox.'
+    else:  # registration
+      expiry_minutes = 10
+      message = 'Registration OTP has been resent to your email. Please check your inbox.'
+    
+    # Generate and send new OTP
+    otp = OTP.create_otp(user, expiry_minutes=expiry_minutes)
+    
+    # TODO: Send OTP via email (we'll implement this later)
+    # For development/testing, you can log the OTP:
+    # print(f"Resent {otp_type} OTP for {user.email}: {otp.code}")  # Development only - remove in production
+    
+    return Response(
+      {
+        'message': message,
+        'email': user.email,
+        'otp_type': otp_type
+      },
+      status=status.HTTP_200_OK
+    )
 
 
 # Delete Account View
