@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 # User Serializer
 class UserSerializer(serializers.ModelSerializer):
   password = serializers.CharField(write_only=True, min_length=8, required=False)
-  username = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+  username = serializers.CharField(required=False, read_only=True)  # Auto-generated from email
 
   class Meta:
     model = User
@@ -21,10 +21,15 @@ class UserSerializer(serializers.ModelSerializer):
     if not password:
       raise serializers.ValidationError({'password': 'Password is required for registration'})
     validated_data['password'] = make_password(password)
-    # Auto-generate username if not provided
-    if 'username' not in validated_data or not validated_data.get('username'):
-      email = validated_data.get('email', '')
-      validated_data['username'] = email.split('@')[0] if email else 'user'
+    
+    # Always set username to email since USERNAME_FIELD is 'email'
+    # This prevents username conflicts and ensures uniqueness
+    email = validated_data.get('email', '')
+    if email:
+      validated_data['username'] = email  # Use email as username
+    else:
+      raise serializers.ValidationError({'email': 'Email is required'})
+    
     validated_data['role'] = validated_data.get('role', 'student')
     return super().create(validated_data)
 
