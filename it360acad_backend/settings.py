@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'authentication',
     'users',
     'rest_framework',
@@ -88,6 +89,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise for static files
+    'corsheaders.middleware.CorsMiddleware',  # CORS middleware (should be early)
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,14 +123,36 @@ WSGI_APPLICATION = 'it360acad_backend.wsgi.application'
 
 if os.environ.get('DB_URL'):
     # Production: Use Supabase
-
+    db_config = dj_database_url.config(
+        default=os.environ.get('DB_URL'),
+        conn_max_age=600,
+        conn_health_checks=False,  # Disable health checks to prevent timeouts
+        ssl_require=True
+    )
+    
+    # Ensure database name is set (Supabase default is 'postgres' if not specified)
+    if not db_config.get('NAME'):
+        db_url = os.environ.get('DB_URL', '')
+        import re
+        # Pattern: postgresql://user:pass@host:port/dbname
+        match = re.search(r'/([^/?]+)(?:\?|$)', db_url.split('@')[-1] if '@' in db_url else db_url)
+        if match:
+            db_config['NAME'] = match.group(1)
+        else:
+            # Default to 'postgres' for Supabase if not found
+            db_config['NAME'] = 'postgres'
+    
+    # Add connection timeout options to prevent hanging
+    db_config.setdefault('OPTIONS', {})
+    # Merge existing OPTIONS if any
+    existing_options = db_config.get('OPTIONS', {})
+    db_config['OPTIONS'] = {
+        **existing_options,
+        'connect_timeout': 10,  # 10 second connection timeout
+    }
+    
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DB_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True
-        )
+        'default': db_config
     }
 else:
     #  Development uses local PostgreSQL
@@ -181,3 +205,22 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media files (if needed)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# CORS Settings
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173').split(',')
+
+# For development, you can also use:
+# CORS_ALLOW_ALL_ORIGINS = DEBUG  # Only allow all origins in DEBUG mode
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
