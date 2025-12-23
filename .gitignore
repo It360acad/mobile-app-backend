@@ -5,5 +5,4 @@ PRD.md
 README.md
 gunicorn_config.py
 build.sh
-requirements.txt
 RENDER_DEPLOYMENT.md
