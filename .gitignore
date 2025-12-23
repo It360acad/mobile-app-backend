@@ -3,6 +3,5 @@
 superbase.md
 PRD.md
 README.md
-gunicorn_config.py
 build.sh
 RENDER_DEPLOYMENT.md
