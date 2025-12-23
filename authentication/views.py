@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from drf_spectacular.utils import extend_schema
 from users.models import User
 from users.serializer import UserSerializer
-from authentication.serializers import ForgetPasswordSerializer, LoginSerializer, OTPVerificationSerializer
+from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer
 from authentication.models import OTP
 
 
@@ -158,22 +158,113 @@ class OTPVerificationView(APIView):
         status=status.HTTP_400_BAD_REQUEST
       )
 
-#  forget password
+
+# Forget Password View - Request OTP for password reset
+@extend_schema(
+  request=ForgetPasswordSerializer,
+  tags=['Authentication'],
+  summary="Forget Password",
+  description="Request a password reset OTP. An OTP will be sent to the user's email.",
+)
 class UserForgetPasswordView(APIView):
   permission_classes = [AllowAny]
-  serializer_class = ForgetPasswordSerializer # serializer to validate the data
+  serializer_class = ForgetPasswordSerializer
 
   def post(self, request):
     serializer = self.serializer_class(data=request.data)
-    serializer.is_valid(raise_exception=True) # raise an exception if the data is not valid
-    user = serializer.save() # save the user
+    serializer.is_valid(raise_exception=True)
+    
+    email = serializer.validated_data.get('email')
+    
+    try:
+      user = User.objects.get(email=email)
+    except User.DoesNotExist:
+      return Response(
+        {'error': 'User with this email does not exist'},
+        status=status.HTTP_404_NOT_FOUND
+      )
+    
+    # Generate and send OTP for password reset
+    otp = OTP.create_otp(user, expiry_minutes=15)  # 15 minutes expiry for password reset
+    
+    # TODO: Send OTP via email (we'll implement this later)
+    # For now, using fixed OTP code: 123456
+    # print(f"Password Reset OTP for {user.email}: {otp.code}")  # Development only
+    
     return Response(
       {
-        'message': 'Password reset successfully',
-        'email': user.email  # Just return email, not full user object
+        'message': 'Password reset OTP has been sent to your email. Please check your inbox.',
+        'email': user.email
       },
       status=status.HTTP_200_OK
     )
+
+
+# Reset Password View - Reset password with OTP verification
+@extend_schema(
+  request=ResetPasswordSerializer,
+  tags=['Authentication'],
+  summary="Reset Password",
+  description="Reset a user's password using the OTP code sent to their email.",
+)
+class UserResetPasswordView(APIView):
+  permission_classes = [AllowAny]
+  serializer_class = ResetPasswordSerializer
+
+  def post(self, request):
+    serializer = self.serializer_class(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    
+    email = serializer.validated_data.get('email')
+    code = serializer.validated_data.get('code')
+    new_password = serializer.validated_data.get('new_password')
+    
+    try:
+      user = User.objects.get(email=email)
+    except User.DoesNotExist:
+      return Response(
+        {'error': 'User with this email does not exist'},
+        status=status.HTTP_404_NOT_FOUND
+      )
+    
+    # Find the most recent unused OTP for this user
+    otp = OTP.objects.filter(
+      user=user,
+      code=code,
+      is_used=False
+    ).order_by('-created_at').first()
+    
+    if not otp:
+      return Response(
+        {'error': 'Invalid or expired OTP code'},
+        status=status.HTTP_400_BAD_REQUEST
+      )
+    
+    # Check if OTP is valid (not expired)
+    if not otp.is_valid():
+      return Response(
+        {'error': 'OTP code has expired. Please request a new one.'},
+        status=status.HTTP_400_BAD_REQUEST
+      )
+    
+    # Verify the OTP
+    if otp.verify():
+      # Reset the password
+      user.set_password(new_password)
+      user.save()
+      
+      return Response(
+        {
+          'message': 'Password has been reset successfully. You can now login with your new password.',
+          'email': user.email
+        },
+        status=status.HTTP_200_OK
+      )
+    else:
+      return Response(
+        {'error': 'Failed to verify OTP'},
+        status=status.HTTP_400_BAD_REQUEST
+      )
 
 
 # Logout View
