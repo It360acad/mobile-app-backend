@@ -158,8 +158,6 @@ class OTPVerificationView(APIView):
         status=status.HTTP_400_BAD_REQUEST
       )
 
-
-
 #  forget password
 class UserForgetPasswordView(APIView):
   permission_classes = [AllowAny]
@@ -209,6 +207,24 @@ class UserLogoutView(APIView):
         status=status.HTTP_400_BAD_REQUEST
       )
 
+
+# TODOS: add rate limiting to the email exists view for security when scalling to production
+#  Email Exist View
+@extend_schema(
+  tags=['Authentication'],
+  summary="Check if email exists in the database",
+  description="Check if email exists in the database.",
+)
+class UserEmailExistsView(APIView):
+  permission_classes = [AllowAny]
+  serializer_class = None
+
+  def get(self, request):
+    email = request.query_params.get('email') # get the email from the query params
+    if User.objects.filter(email=email).exists(): # check if the email exists in the database
+      return Response ({'exists': True}, status=status.HTTP_200_OK) # return True 
+    else: # if the email does not exist in the database
+      return Response({'exists': False}, status=status.HTTP_200_OK) # return False
 
 # Custom Token Refresh View with Authentication tag
 @extend_schema(
