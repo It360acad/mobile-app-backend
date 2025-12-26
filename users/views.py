@@ -1,14 +1,41 @@
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
-from users.serializer import UserSerializer
+from drf_spectacular.utils import extend_schema
+from users.models import User
+from users.serializer import UserDetailSerializer, UserUpdateSerializer
 
 
-# User Profile View (Get and Update)
-class UserProfileView(RetrieveUpdateAPIView):
-  serializer_class = UserSerializer
+# User List View
+@extend_schema(
+  tags=['Users'],
+  summary="List Users",
+  description="Get a list of all users in the database.",
+)
+class UserListView(ListAPIView):
+  queryset = User.objects.all()
+  serializer_class = UserDetailSerializer
   permission_classes = [IsAuthenticated]
 
-  def get_object(self):
-    return self.request.user
 
-  # Password update is handled in the serializer
+# User Retrieve View
+@extend_schema(
+  tags=['Users'],
+  summary="Retrieve User",
+  description="Get a specific user by their primary key (pk).",
+)
+class UserRetrieveView(RetrieveAPIView):
+  queryset = User.objects.all()
+  serializer_class = UserDetailSerializer
+  permission_classes = [IsAuthenticated]
+
+
+# User Update View
+@extend_schema(
+  tags=['Users'],
+  summary="Update User",
+  description="Update a specific user by their primary key (pk).",
+)
+class UserUpdateView(UpdateAPIView):
+  queryset = User.objects.all()
+  serializer_class = UserUpdateSerializer
+  permission_classes = [IsAuthenticated]

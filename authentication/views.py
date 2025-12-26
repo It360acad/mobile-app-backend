@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -452,6 +452,20 @@ class UserDeleteAccountView(APIView):
         
         return Response(result, status=status.HTTP_200_OK)
 
+
+
+# User Profile View 
+@extend_schema(
+  tags=['Authentication'],
+  summary="Get User Profile",
+  description="Get the details of the currently logged-in user.",
+)
+class UserProfileView(RetrieveAPIView):
+  serializer_class = UserSerializer
+  permission_classes = [IsAuthenticated]
+
+  def get_object(self):
+    return self.request.user
 
 
 # Custom Token Refresh View with Authentication tag
