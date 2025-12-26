@@ -11,7 +11,8 @@ from users.models import User
 from users.serializer import UserSerializer
 from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer, DeleteAccountSerializer, ResendOTPSerializer
 from authentication.models import OTP
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 @extend_schema(
   tags=['Authentication'],
@@ -37,17 +38,37 @@ class UserRegisterView(CreateAPIView):
     # Generate and send OTP
     otp = OTP.create_otp(user, expiry_minutes=10)
     
-    # TODO: Send OTP via email (we'll implement this later)
-    # For development/testing, you can log the OTP:
-    # print(f"OTP for {user.email}: {otp.code}")  # Development only - remove in production
-
-    return Response({
-      'message': 'User registered successfully. Please check your email for OTP verification code.',
+    # Initialize response data
+    response_data = {
+      'message': 'User registered successfully. Please check your email for OTP.',
       'user': {
         'id': user.id,
         'email': user.email,
       },
-    }, status=status.HTTP_201_CREATED)
+    }
+    
+    # Send OTP via email
+    try:
+      send_mail(
+        'OTP Verification - IT360 Academy',
+        f'Your IT360 Academy Registration OTP is: {otp.code}\n\nThis code will expire in 10 minutes.\n\nIf you did not request this code, please ignore this email.',
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False
+      )
+      response_data['email_sent'] = True
+    except Exception as e:
+      # Log the error but don't fail registration
+      # In production, you might want to use a logging service
+      print(f"Failed to send email to {user.email}: {str(e)}")
+      # For development, include OTP in response if email fails
+      # Remove this in production once email is working
+      response_data['otp'] = otp.code
+      response_data['email_sent'] = False
+      response_data['email_error'] = str(e)
+      response_data['message'] = 'User registered successfully. Email sending failed - OTP included in response.'
+
+    return Response(response_data, status=status.HTTP_201_CREATED)
 
 
 # Custom Login View
@@ -187,17 +208,33 @@ class UserForgetPasswordView(APIView):
     # Generate and send OTP for password reset
     otp = OTP.create_otp(user, expiry_minutes=15)  # 15 minutes expiry for password reset
     
-    # TODO: Send OTP via email (we'll implement this later)
-    # For development/testing, you can log the OTP:
-    # print(f"Password Reset OTP for {user.email}: {otp.code}")  # Development only - remove in production
+    # Initialize response data
+    response_data = {
+      'message': 'Password reset OTP has been sent to your email. Please check your inbox.',
+      'email': user.email,
+    }
     
-    return Response(
-      {
-        'message': 'Password reset OTP has been sent to your email. Please check your inbox.',
-        'email': user.email
-      },
-      status=status.HTTP_200_OK
-    )
+    # Send OTP via email
+    try:
+      send_mail(
+        'Password Reset OTP - IT360 Academy',
+        f'Your IT360 Academy Password Reset OTP is: {otp.code}\n\nThis code will expire in 15 minutes.\n\nIf you did not request a password reset, please ignore this email.',
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False
+      )
+      response_data['email_sent'] = True
+    except Exception as e:
+      # Log the error but don't fail the request
+      print(f"Failed to send email to {user.email}: {str(e)}")
+      # For development, include OTP in response if email fails
+      # Remove this in production once email is working
+      response_data['otp'] = otp.code
+      response_data['email_sent'] = False
+      response_data['email_error'] = str(e)
+      response_data['message'] = 'Password reset OTP generated. Email sending failed - OTP included in response.'
+    
+    return Response(response_data, status=status.HTTP_200_OK)
 
 
 # Reset Password View - Reset password with OTP verification
@@ -355,18 +392,42 @@ class UserResendOtpView(APIView):
     # Generate and send new OTP
     otp = OTP.create_otp(user, expiry_minutes=expiry_minutes)
     
-    # TODO: Send OTP via email (we'll implement this later)
-    # For development/testing, you can log the OTP:
-    # print(f"Resent {otp_type} OTP for {user.email}: {otp.code}")  # Development only - remove in production
+    # Initialize response data
+    response_data = {
+      'message': message,
+      'email': user.email,
+      'otp_type': otp_type,
+    }
     
-    return Response(
-      {
-        'message': message,
-        'email': user.email,
-        'otp_type': otp_type
-      },
-      status=status.HTTP_200_OK
-    )
+    # Determine email subject and body based on OTP type
+    if otp_type == 'password_reset':
+      email_subject = 'Password Reset OTP - IT360 Academy'
+      email_body = f'Your IT360 Academy Password Reset OTP is: {otp.code}\n\nThis code will expire in 15 minutes.\n\nIf you did not request a password reset, please ignore this email.'
+    else:
+      email_subject = 'OTP Verification - IT360 Academy'
+      email_body = f'Your IT360 Academy Registration OTP is: {otp.code}\n\nThis code will expire in 10 minutes.\n\nIf you did not request this code, please ignore this email.'
+    
+    # Send OTP via email
+    try:
+      send_mail(
+        email_subject,
+        email_body,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+        fail_silently=False
+      )
+      response_data['email_sent'] = True
+    except Exception as e:
+      # Log the error but don't fail the request
+      print(f"Failed to send email to {user.email}: {str(e)}")
+      # For development, include OTP in response if email fails
+      # Remove this in production once email is working
+      response_data['otp'] = otp.code
+      response_data['email_sent'] = False
+      response_data['email_error'] = str(e)
+      response_data['message'] = f'{otp_type.replace("_", " ").title()} OTP generated. Email sending failed - OTP included in response.'
+    
+    return Response(response_data, status=status.HTTP_200_OK)
 
 
 # Delete Account View

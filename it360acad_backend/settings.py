@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'drf_spectacular',
+    'anymail'
 ]
 
 # REST Framework configuration
@@ -230,3 +231,17 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
+
+
+# Email Configuration - Using Brevo (SendinBlue) SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp-relay.brevo.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '9ea7ba001@smtp-brevo.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'pCzIxEBA8S6J7GKP')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'omosgoerge@gmail.com')
+SERVER_EMAIL = os.getenv('SERVER_EMAIL', DEFAULT_FROM_EMAIL)
+
+# Note: For production, store EMAIL_HOST_PASSWORD in environment variables for security
+# Remove the default value above and set it in your .env file 
