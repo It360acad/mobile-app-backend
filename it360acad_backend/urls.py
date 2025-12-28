@@ -3,12 +3,13 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
-from courses.views.category import CategoryViewSet
+from courses.views import CategoryViewSet, CourseViewSet
 from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='categories')
+router.register(r'courses', CourseViewSet, basename='courses')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

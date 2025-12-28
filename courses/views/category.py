@@ -6,7 +6,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from courses.models import Category
 from courses.serializer.category import CategorySerializer, CategoryListSerializer
-# from courses.serializer.course import CourseListSerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
