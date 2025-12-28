@@ -4,10 +4,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from drf_spectacular.utils import extend_schema, extend_schema_view
-
 from courses.models import Category
 from courses.serializer.category import CategorySerializer, CategoryListSerializer
+# from courses.serializer.course import CourseListSerializer
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -29,13 +28,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
         elif self.action in ['create', 'update', 'destroy']:
             return [IsAdminUser()]
         return [IsAuthenticated()]
-    
-    def partial_update(self, request, *args, **kwargs):
-        """Disable PATCH method"""
-        return Response(
-            {'error': 'PATCH method is not allowed. Use PUT for updates.'},
-            status=status.HTTP_405_METHOD_NOT_ALLOWED
-        )
     
     def get_serializer_class(self):
         """Use lightweight serializer for list view"""
@@ -70,3 +62,18 @@ class CategoryViewSet(viewsets.ModelViewSet):
             )
         
         return super().destroy(request, *args, **kwargs)
+    
+    # ============================================
+    # CUSTOM ENDPOINTS USING @action DECORATOR
+    # ============================================
+    
+    # @action(detail=True, methods=['get'])
+    # def courses(self, request, slug=None):
+    #     """
+    #     Custom endpoint: GET /api/categories/{slug}/courses/
+    #     Get all courses in this category
+    #     """
+    #     category = self.get_object()
+    #     courses = category.courses.all()
+    #     serializer = CourseListSerializer(courses, many=True, context={'request': request})
+    #     return Response(serializer.data)
