@@ -26,14 +26,11 @@ class UserRegisterView(CreateAPIView):
 
 
   def create(self, request, *args, **kwargs):
-    serializer = self.get_serializer(data=request.data)
+    serializer = self.serializer_class(data=request.data)
     serializer.is_valid(raise_exception=True)
     
-    # Create user but set is_verified to False initially
+    # Create user (is_verified=False and is_active=True are set in serializer)
     user = serializer.save()
-    user.is_verified = False
-    user.is_active = True  # User can login but needs to verify email
-    user.save()
 
     # Generate and send OTP
     otp = OTP.create_otp(user, expiry_minutes=10)
@@ -58,16 +55,8 @@ class UserRegisterView(CreateAPIView):
       )
       response_data['email_sent'] = True
     except Exception as e:
-      # Log the error but don't fail registration
-      # In production, you might want to use a logging service
       print(f"Failed to send email to {user.email}: {str(e)}")
-      # For development, include OTP in response if email fails
-      # Remove this in production once email is working
-      response_data['otp'] = otp.code
-      response_data['email_sent'] = False
-      response_data['email_error'] = str(e)
       response_data['message'] = 'User registered successfully. Email sending failed - OTP included in response.'
-
     return Response(response_data, status=status.HTTP_201_CREATED)
 
 

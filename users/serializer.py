@@ -6,14 +6,22 @@ from django.contrib.auth.hashers import make_password
 class UserSerializer(serializers.ModelSerializer):
   password = serializers.CharField(write_only=True, min_length=8, required=False)
   username = serializers.CharField(required=False, read_only=True)  # Auto-generated from email
+  role = serializers.ChoiceField(choices=[('student', 'Student'), ('parent', 'Parent')], default='student')
 
   class Meta:
     model = User
     fields = ['id', 'email', 'first_name', 'last_name', 'role', 'username', 'password', 'date_joined']
     extra_kwargs = {
       'email': {'required': True},
-      'role': {'required': True},
     }
+  
+  def validate_role(self, value):
+    """Ensure regular users can only be 'student' or 'parent'"""
+    if value == 'admin':
+      raise serializers.ValidationError("Regular users cannot have 'admin' role. Only superusers can be admins.")
+    if value not in ['student', 'parent']:
+      raise serializers.ValidationError("Role must be either 'student' or 'parent'.")
+    return value
   
   # Hash password before creating user
   def create(self, validated_data):
@@ -31,6 +39,8 @@ class UserSerializer(serializers.ModelSerializer):
       raise serializers.ValidationError({'email': 'Email is required'})
     
     validated_data['role'] = validated_data.get('role', 'student')
+    validated_data['is_verified'] = False
+    validated_data['is_active'] = True
     return super().create(validated_data)
 
   def update(self, instance, validated_data):
@@ -77,6 +87,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
   password = serializers.CharField(write_only=True, min_length=8, required=False)
   username = serializers.CharField(required=False, read_only=True)
   profile = ProfileSerializer(required=False)
+  role = serializers.ChoiceField(choices=[('student', 'Student'), ('parent', 'Parent'), ('admin', 'Admin')], required=False)
 
   class Meta:
     model = User
@@ -85,6 +96,17 @@ class UserUpdateSerializer(serializers.ModelSerializer):
       'password', 'date_joined', 'is_verified', 'profile'
     ]
     read_only_fields = ['id', 'username', 'date_joined', 'is_verified']
+
+  def validate_role(self, value):
+    """Ensure regular users can only be 'student' or 'parent'. Only superusers can be 'admin'."""
+    # Allow admin role only if the user is already a superuser
+    if value == 'admin':
+      # Check if this is an update and the instance is a superuser
+      if self.instance and not self.instance.is_superuser:
+        raise serializers.ValidationError("Only superusers can have 'admin' role.")
+    elif value not in ['student', 'parent']:
+      raise serializers.ValidationError("Role must be either 'student' or 'parent'.")
+    return value
 
   def update(self, instance, validated_data):
     password = validated_data.pop('password', None)

@@ -16,13 +16,10 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 # For Render deployment
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
-    # On Render, allow the service hostname
     ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, 'localhost', '127.0.0.1']
-    # Also add any additional hosts from environment
     additional_hosts = os.getenv('ALLOWED_HOSTS', '').split(',')
     ALLOWED_HOSTS.extend([h.strip() for h in additional_hosts if h.strip()])
 else:
-    # Development: use environment variable or default
     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 AUTH_USER_MODEL = 'users.User'
@@ -31,8 +28,6 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = 'DENY'    #  Prevent clickjacking attacks
-    # Only enable SSL redirect if not on Render (Render handles SSL termination)
-    # SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000  #  HSTS for 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True  #  HSTS for all subdomains
     SECURE_HSTS_PRELOAD = True  #  HSTS for preload
@@ -49,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'authentication',
     'users',
+    'courses',
     'rest_framework',
     'drf_spectacular',
     'anymail'
@@ -95,8 +91,8 @@ SIMPLE_JWT = {
 #  Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise for static files
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware (should be early)
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -232,16 +228,11 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+#  Anymail configuration
+ANYMAIL = {
+    'MAILGUN_API_KEY': os.getenv('MAILGUN_API_KEY'),
+}
 
-# Email Configuration - Using Brevo (SendinBlue) SMTP
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp-relay.brevo.com')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '9ea7ba001@smtp-brevo.com')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'pCzIxEBA8S6J7GKP')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'omosgoerge@gmail.com')
-SERVER_EMAIL = os.getenv('SERVER_EMAIL', DEFAULT_FROM_EMAIL)
-
-# Note: For production, store EMAIL_HOST_PASSWORD in environment variables for security
-# Remove the default value above and set it in your .env file 
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL # USE DEFAULT_FROM_EMAIL for SERVER_EMAIL
