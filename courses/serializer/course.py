@@ -24,6 +24,8 @@ class CourseSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {
             'slug': {'required': False},
+            'cover_image': {'required': False},
+            'cover_video': {'required': False},
         }
     
     def validate_title(self, value):
@@ -68,4 +70,9 @@ class CourseListSerializer(serializers.ModelSerializer):
             'start_date', 'end_date', 'category', 'created_at'
         ]
         read_only_fields = ['id', 'created_at', 'enrollment_count']
+        extra_kwargs = {
+            'slug': {'required': True},
+            'cover_image': {'required': False},
+            'cover_video': {'required': False},
+        }
 
