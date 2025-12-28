@@ -67,6 +67,12 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API documentation for IT360 Academy',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    # Fix enum naming collision for 'role' field
+    'ENUM_NAME_OVERRIDES': {
+        'UserRoleEnum': 'users.models.User.role',
+    },
+    # Suppress enum collision warnings (optional)
+    'SCHEMA_PATH_PREFIX': '/api/',
 }
 
 # JWT Settings
