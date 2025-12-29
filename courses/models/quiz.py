@@ -1,5 +1,4 @@
 from django.db import models
-from courses.models.course import Course
 from courses.models.lesson import Lesson
 from users.models import User
 
@@ -12,10 +11,9 @@ class Quiz(models.Model):
   is_published = models.BooleanField(default=False, verbose_name='is published')
   created_at = models.DateTimeField(auto_now_add=True, verbose_name='created at')
   updated_at = models.DateTimeField(auto_now=True, verbose_name='updated at')
-  course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='quizzes', null=True, blank=True)
-  lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='quizzes', null=True, blank=True)
-  created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_quizzes')
-  updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_quizzes')
+  lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='quizzes')
+  created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='created_quizzes')
+  updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='updated_quizzes')
 
   class Meta:
     verbose_name = 'Quiz'

@@ -3,7 +3,7 @@ from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework_nested import routers
 
-from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet
+from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet
 
 # Main router for top-level resources
 router = routers.DefaultRouter()
@@ -14,9 +14,9 @@ router.register(r'courses', CourseViewSet, basename='courses')
 courses_router = routers.NestedDefaultRouter(router, r'courses', lookup='course')
 courses_router.register(r'lessons', LessonViewSet, basename='course-lessons')
 
-# You can also add more nested routes:
-# courses_router.register(r'quizzes', QuizViewSet, basename='course-quizzes')
-# courses_router.register(r'enrollments', EnrollmentViewSet, basename='course-enrollments')
+# Nested router: lessons/{lesson_id}/quizzes (quizzes are linked to lessons)
+lessons_router = routers.NestedDefaultRouter(courses_router, r'lessons', lookup='lesson')
+lessons_router.register(r'quizzes', QuizViewSet, basename='lesson-quizzes')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,6 +35,7 @@ urlpatterns = [
     
     # Nested routes
     path('api/', include(courses_router.urls)),
+    path('api/', include(lessons_router.urls)),
 ]
 
 # This creates these endpoints:
@@ -59,3 +60,10 @@ urlpatterns = [
 # GET    /api/courses/{course_id}/lessons/{id}/      - Get specific lesson
 # PUT    /api/courses/{course_id}/lessons/{id}/      - Update lesson
 # DELETE /api/courses/{course_id}/lessons/{id}/      - Delete lesson
+# 
+# Quizzes (nested under lessons):
+# GET    /api/courses/{course_id}/lessons/{lesson_id}/quizzes/           - List all quizzes in lesson
+# POST   /api/courses/{course_id}/lessons/{lesson_id}/quizzes/           - Create quiz in lesson
+# GET    /api/courses/{course_id}/lessons/{lesson_id}/quizzes/{id}/      - Get specific quiz
+# PUT    /api/courses/{course_id}/lessons/{lesson_id}/quizzes/{id}/      - Update quiz
+# DELETE /api/courses/{course_id}/lessons/{lesson_id}/quizzes/{id}/      - Delete quiz

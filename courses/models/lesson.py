@@ -12,7 +12,7 @@ class Lesson(models.Model):
   is_published = models.BooleanField(default=False, verbose_name='is published')
   created_at = models.DateTimeField(auto_now_add=True, verbose_name='created at')
   updated_at = models.DateTimeField(auto_now=True, verbose_name='updated at')
-  course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
+  course = models.ForeignKey(Course, on_delete=models.PROTECT, related_name='lessons')
   created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='created_lessons')
   updated_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='updated_lessons')
 
