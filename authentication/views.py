@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from users.models import User
 from users.serializer import UserSerializer
 from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer, DeleteAccountSerializer, ResendOTPSerializer
@@ -55,7 +55,13 @@ class UserRegisterView(CreateAPIView):
       )
       response_data['email_sent'] = True
     except Exception as e:
+      # Log the error but don't fail the request
       print(f"Failed to send email to {user.email}: {str(e)}")
+      # For development, include OTP in response if email fails
+      # Remove this in production once email is working
+      response_data['otp'] = otp.code
+      response_data['email_sent'] = False
+      response_data['email_error'] = str(e)
       response_data['message'] = 'User registered successfully. Email sending failed - OTP included in response.'
     return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -330,7 +336,16 @@ class UserLogoutView(APIView):
 @extend_schema(
   tags=['Authentication'],
   summary="Check if email exists in the database",
-  description="Check if email exists in the database.",
+  description="Check if email exists in the database. Provide email as a query parameter.",
+  parameters=[
+    OpenApiParameter(
+      name='email',
+      type={'type': 'string', 'format': 'email'},
+      location=OpenApiParameter.QUERY,
+      required=True,
+      description='Email address to check'
+    )
+  ]
 )
 class UserEmailExistsView(APIView):
   permission_classes = [AllowAny]
@@ -338,10 +353,29 @@ class UserEmailExistsView(APIView):
 
   def get(self, request):
     email = request.query_params.get('email') # get the email from the query params
+    
+    if not email:
+      return Response(
+        {'error': 'Email parameter is required'},
+        status=status.HTTP_400_BAD_REQUEST
+      )
+    
+    # Validate email format
+    from django.core.validators import validate_email
+    from django.core.exceptions import ValidationError
+    
+    try:
+      validate_email(email)
+    except ValidationError:
+      return Response(
+        {'error': 'Invalid email format'},
+        status=status.HTTP_400_BAD_REQUEST
+      )
+    
     if User.objects.filter(email=email).exists(): # check if the email exists in the database
-      return Response ({'exists': True}, status=status.HTTP_200_OK) # return True 
+      return Response({'message': 'Email Already Exist', 'exists': True}, status=status.HTTP_200_OK) # return True 
     else: # if the email does not exist in the database
-      return Response({'exists': False}, status=status.HTTP_200_OK) # return False
+      return Response({'message': 'Email Does Not Exist', 'exists': False}, status=status.HTTP_200_OK) # return False
 
 
 # Resend OTP View
@@ -424,7 +458,7 @@ class UserResendOtpView(APIView):
   request=DeleteAccountSerializer,
   tags=['Authentication'],
   summary="Delete Account",
-  description="Delete a user's account.",
+  description="Delete a user's account. Users can delete their own account (password required). Admins can delete any user's account (password not required).",
 )
 class UserDeleteAccountView(APIView):
     permission_classes = [IsAuthenticated]

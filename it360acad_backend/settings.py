@@ -234,6 +234,30 @@ ANYMAIL = {
     'MAILGUN_API_KEY': os.getenv('MAILGUN_API_KEY'),
 }
 
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-SERVER_EMAIL = DEFAULT_FROM_EMAIL # USE DEFAULT_FROM_EMAIL for SERVER_EMAIL
+# Resend Email Configuration (SMTP)
+# For development: Use console backend to print emails to terminal (no real sending)
+# For production: Use SMTP backend with verified domain
+USE_CONSOLE_EMAIL = os.getenv('USE_CONSOLE_EMAIL', 'False').lower() == 'true'
+
+if USE_CONSOLE_EMAIL:
+    # Development: Print emails to console instead of sending
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@it360academy.com')
+else:
+    # Production: Use Resend SMTP
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.resend.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'resend'
+    EMAIL_HOST_PASSWORD = os.getenv('RESEND_API_KEY')
+    
+    # Default email settings
+    # IMPORTANT: You must verify YOUR OWN DOMAIN on Resend (resend.com/domains)
+    # - Render's domain (mobile-app-backend-ip9w.onrender.com) CANNOT be used for email
+    # - You need to own a domain (like it360academy.com) and verify it with Resend
+    # - The test domain (onboarding@resend.dev) only works for your account email
+    # For production, use: noreply@yourdomain.com (where yourdomain.com is YOUR OWN domain)
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'onboarding@resend.dev')
+
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
