@@ -229,11 +229,6 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-#  Anymail configuration
-ANYMAIL = {
-    'MAILGUN_API_KEY': os.getenv('MAILGUN_API_KEY'),
-}
-
 # Resend Email Configuration (SMTP)
 # For development: Use console backend to print emails to terminal (no real sending)
 # For production: Use SMTP backend with verified domain
