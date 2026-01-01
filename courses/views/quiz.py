@@ -53,7 +53,7 @@ class QuizViewSet(viewsets.ModelViewSet):
 
   def perform_create(self, serializer):
     """Automatically set created_by, updated_by, and lesson if nested"""
-    # If nested under lesson, set lesson from URL
+    # If nested under lesson, set lesson from URL then
     lesson_id = self.kwargs.get('lesson_pk')
     if lesson_id:
       serializer.save(
