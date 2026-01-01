@@ -253,6 +253,7 @@ else:
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'resend'
     EMAIL_HOST_PASSWORD = os.getenv('RESEND_API_KEY')
+    EMAIL_TIMEOUT = 10  # Time out after 10 seconds to prevent worker timeout
     
     # Default email settings
     # IMPORTANT: You must verify YOUR OWN DOMAIN on Resend (resend.com/domains)
