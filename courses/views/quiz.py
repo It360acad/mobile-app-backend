@@ -1,9 +1,26 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from courses.models import Quiz
 from courses.serializer.quiz import QuizSerializer, QuizListSerializer
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='course_pk',
+            type=int,
+            location=OpenApiParameter.PATH,
+            description='Course ID (from nested route)',
+        ),
+        OpenApiParameter(
+            name='lesson_pk',
+            type=int,
+            location=OpenApiParameter.PATH,
+            description='Lesson ID (from nested route)',
+        ),
+    ]
+)
 class QuizViewSet(viewsets.ModelViewSet):
   queryset = Quiz.objects.all()
   serializer_class = QuizSerializer

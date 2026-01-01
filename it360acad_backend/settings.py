@@ -68,6 +68,9 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/',
+    'ENUM_NAME_OVERRIDES': {
+        'UserRoleEnum': 'users.models.User.role',
+    },
 }
 
 # JWT Settings
