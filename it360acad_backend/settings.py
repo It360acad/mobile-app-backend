@@ -69,7 +69,11 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': '/api/',
     'ENUM_NAME_OVERRIDES': {
-        'UserRoleEnum': 'users.models.User.role',
+        'UserRoleEnum': [
+            ('student', 'Student'),
+            ('parent', 'Parent'),
+            ('admin', 'Admin'),
+        ],
     },
 }
 
