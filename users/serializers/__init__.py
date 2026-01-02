@@ -2,13 +2,17 @@ from .user import (
     UserSerializer, 
     ProfileSerializer, 
     UserDetailSerializer, 
-    UserUpdateSerializer
+    UserUpdateSerializer,
+    LinkChildSerializer
 )
+from .student import StudentSerializer
 
 __all__ = [
     'UserSerializer', 
     'ProfileSerializer', 
     'UserDetailSerializer', 
-    'UserUpdateSerializer'
+    'UserUpdateSerializer',
+    'StudentSerializer',
+    'LinkChildSerializer',
 ]
 

@@ -1,6 +1,9 @@
-from courses.models.category import Category
-from courses.models.course import Course
-from courses.models.lesson import Lesson
-from courses.models.quiz import Quiz
+from .category import Category
+from .course import Course
+from .lesson import Lesson
+from .quiz import Quiz
+from .enrollment import CourseEnrollment
+from .certificate import Certificate
+from .bookmark import CourseBookmark
 
-__all__ = ['Category', 'Course', 'Lesson', 'Quiz']
+__all__ = ['Category', 'Course', 'Lesson', 'Quiz', 'CourseEnrollment', 'Certificate', 'CourseBookmark']

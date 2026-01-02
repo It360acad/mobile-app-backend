@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User, Profile, Student
+from users.models import User, Profile, Student, Parent
 from django.contrib.auth.hashers import make_password
 
 # User Serializer
@@ -7,10 +7,25 @@ class UserSerializer(serializers.ModelSerializer):
   password = serializers.CharField(write_only=True, min_length=8, required=False)
   username = serializers.CharField(required=False, read_only=True)  # Auto-generated from email
   role = serializers.ChoiceField(choices=[('student', 'Student'), ('parent', 'Parent')], default='student')
+  
+  # Student fields
+  student_id = serializers.CharField(required=False, write_only=True)
+  current_class = serializers.CharField(required=False, write_only=True)
+  current_school = serializers.CharField(required=False, write_only=True)
+  
+  # Parent fields
+  parent_id = serializers.CharField(required=False, write_only=True)
+  occupation = serializers.CharField(required=False, write_only=True)
+  relationship_to_student = serializers.CharField(required=False, write_only=True)
+  linking_code = serializers.CharField(required=False, write_only=True)
 
   class Meta:
     model = User
-    fields = ['id', 'email', 'first_name', 'last_name', 'role', 'username', 'password', 'date_joined']
+    fields = [
+      'id', 'email', 'first_name', 'last_name', 'role', 'username', 'password', 'date_joined',
+      'student_id', 'current_class', 'current_school',
+      'parent_id', 'occupation', 'relationship_to_student', 'linking_code'
+    ]
     extra_kwargs = {
       'email': {'required': True},
     }
@@ -26,22 +41,58 @@ class UserSerializer(serializers.ModelSerializer):
   # Hash password before creating user
   def create(self, validated_data):
     password = validated_data.pop('password', None)
+    
+    # Extract student/parent specific data
+    student_data = {
+      'student_id': validated_data.pop('student_id', None),
+      'current_class': validated_data.pop('current_class', None),
+      'current_school': validated_data.pop('current_school', None),
+    }
+    parent_data = {
+      'parent_id': validated_data.pop('parent_id', None),
+      'occupation': validated_data.pop('occupation', None),
+      'relationship_to_student': validated_data.pop('relationship_to_student', None),
+    }
+    linking_code = validated_data.pop('linking_code', None)
+
     if not password:
       raise serializers.ValidationError({'password': 'Password is required for registration'})
     validated_data['password'] = make_password(password)
     
     # Always set username to email since USERNAME_FIELD is 'email'
-    # This prevents username conflicts and ensures uniqueness
     email = validated_data.get('email', '')
     if email:
-      validated_data['username'] = email  # Use email as username
+      validated_data['username'] = email
     else:
       raise serializers.ValidationError({'email': 'Email is required'})
     
-    validated_data['role'] = validated_data.get('role', 'student')
+    role = validated_data.get('role', 'student')
     validated_data['is_verified'] = False
     validated_data['is_active'] = True
-    return super().create(validated_data)
+    
+    user = super().create(validated_data)
+    
+    # Create Profile
+    Profile.objects.create(user=user)
+    
+    # Create role-specific profile
+    if role == 'student':
+      Student.objects.create(user=user, **{k: v for k, v in student_data.items() if v is not None})
+    elif role == 'parent':
+      parent_profile = Parent.objects.create(user=user, **{k: v for k, v in parent_data.items() if v is not None})
+      # Link child if code provided
+      if linking_code:
+        try:
+          student = Student.objects.get(linking_code=linking_code)
+          if not student.parent:
+            student.parent = parent_profile
+            student.save()
+        except Student.DoesNotExist:
+          # We might want to raise an error here, but for registration, 
+          # maybe just ignore or handle it gracefully
+          pass
+      
+    return user
 
   def update(self, instance, validated_data):
     password = validated_data.pop('password', None)
@@ -72,14 +123,20 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
   profile = ProfileSerializer(read_only=True)
   username = serializers.CharField(required=False, read_only=True)
+  linking_code = serializers.SerializerMethodField()
 
   class Meta:
     model = User
     fields = [
       'id', 'email', 'first_name', 'last_name', 'role', 'username', 
-      'date_joined', 'is_verified', 'profile'
+      'date_joined', 'is_verified', 'profile', 'linking_code'
     ]
     read_only_fields = ['id', 'username', 'date_joined', 'is_verified']
+
+  def get_linking_code(self, obj):
+    if obj.role == 'student' and hasattr(obj, 'student_profile'):
+      return obj.student_profile.linking_code
+    return None
 
 
 # User Update Serializer (for update operations)
@@ -135,4 +192,33 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         Profile.objects.create(**profile_data)
     
     return instance
+
+
+class LinkChildSerializer(serializers.Serializer):
+  linking_code = serializers.CharField(required=True)
+
+  def validate_linking_code(self, value):
+    try:
+      student = Student.objects.get(linking_code=value)
+    except Student.DoesNotExist:
+      raise serializers.ValidationError("Invalid linking code.")
+    
+    if student.parent:
+      raise serializers.ValidationError("This student is already linked to a parent.")
+    
+    return value
+
+  def link_child(self, parent_user):
+    linking_code = self.validated_data['linking_code']
+    student = Student.objects.get(linking_code=linking_code)
+    
+    # Get the parent profile
+    try:
+      parent_profile = parent_user.parent_profile
+    except AttributeError:
+      raise serializers.ValidationError("User does not have a parent profile.")
+    
+    student.parent = parent_profile
+    student.save()
+    return student
 

@@ -3,18 +3,28 @@ from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework_nested import routers
 
-from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet
+from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet, CourseEnrollmentViewSet, CertificateViewSet, CourseBookmarkViewSet
+from users.views import StudentViewSet
 
 # Main router for top-level resources
 router = routers.DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='categories')
 router.register(r'courses', CourseViewSet, basename='courses')
+router.register(r'students', StudentViewSet, basename='students')
+router.register(r'certificates', CertificateViewSet, basename='certificates')
+router.register(r'bookmarks', CourseBookmarkViewSet, basename='bookmarks')
 
-# Nested router: courses/{course_id}/lessons
+# Nested router: courses/{course_id}/enrollments
 courses_router = routers.NestedDefaultRouter(router, r'courses', lookup='course')
 courses_router.register(r'lessons', LessonViewSet, basename='course-lessons')
+courses_router.register(r'enrollments', CourseEnrollmentViewSet, basename='course-enrollments')
 
-# Nested router: lessons/{lesson_id}/quizzes (quizzes are linked to lessons)
+# Nested router: students/{student_id}/courses (mapped to enrollments)
+students_router = routers.NestedDefaultRouter(router, r'students', lookup='student')
+students_router.register(r'courses', CourseEnrollmentViewSet, basename='student-courses')
+students_router.register(r'bookmarks', CourseBookmarkViewSet, basename='student-bookmarks')
+
+# Nested router: lessons/{lesson_id}/quizzes
 lessons_router = routers.NestedDefaultRouter(courses_router, r'lessons', lookup='lesson')
 lessons_router.register(r'quizzes', QuizViewSet, basename='lesson-quizzes')
 
@@ -35,6 +45,7 @@ urlpatterns = [
     
     # Nested routes
     path('api/', include(courses_router.urls)),
+    path('api/', include(students_router.urls)),
     path('api/', include(lessons_router.urls)),
 ]
 
