@@ -1,8 +1,13 @@
+import logging
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from users.models import User
 from users.serializer import UserDetailSerializer, UserUpdateSerializer
+
+
+# Get the logger named 'users'
+logger = logging.getLogger('users')
 
 
 # User List View
@@ -15,6 +20,16 @@ class UserListView(ListAPIView):
   queryset = User.objects.all()
   serializer_class = UserDetailSerializer
   permission_classes = [IsAuthenticated]
+
+  def get(self, request, *args, **kwargs):
+    logger.info(
+      f"User {request.user.email} is retrieving the list of all users.",
+      extra={
+        'tenant_id': 'N/A',
+        'user_id': request.user.id
+      }
+    )
+    return super().get(request, *args, **kwargs)
 
 
 # User Retrieve View

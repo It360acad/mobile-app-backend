@@ -105,6 +105,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'it360acad_backend.middleware.RequestLoggingMiddleware',  # Added Request Logging
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -245,7 +246,6 @@ ANYMAIL = {
 USE_CONSOLE_EMAIL = os.getenv('USE_CONSOLE_EMAIL', 'False').lower() == 'true'
 
 if USE_CONSOLE_EMAIL:
-    # Development: Print emails to console
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
     # Production: Use Resend API via Anymail (Much more reliable than SMTP on Render)
@@ -254,3 +254,11 @@ else:
 # Default email settings
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'onboarding@resend.dev')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# Admins for error reporting
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+if ADMIN_EMAIL:
+    ADMINS = [('Admin', ADMIN_EMAIL)]
+
+# Logging Configuration
+from .logger.Logger import LOGGING
