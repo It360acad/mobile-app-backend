@@ -8,7 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from users.models import User
-from users.serializer import UserSerializer
+from users.serializers import UserSerializer
 from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSerializer, LoginSerializer, OTPVerificationSerializer, DeleteAccountSerializer, ResendOTPSerializer
 from authentication.models import OTP
 from django.core.mail import send_mail

@@ -1,6 +1,6 @@
 from courses.models.course import Course
 from rest_framework import serializers
-from users.serializer import UserSerializer
+from users.serializers import UserSerializer
 from django.utils.text import slugify
 
 

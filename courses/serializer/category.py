@@ -2,7 +2,7 @@
 
 from courses.models.category import Category
 from rest_framework import serializers
-from users.serializer import UserSerializer
+from users.serializers import UserSerializer
 from django.utils.text import slugify
 
 

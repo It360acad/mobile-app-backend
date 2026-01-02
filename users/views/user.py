@@ -3,8 +3,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema
 from users.models import User
-from users.serializer import UserDetailSerializer, UserUpdateSerializer
-
+from users.serializers import UserDetailSerializer, UserUpdateSerializer
 
 # Get the logger named 'users'
 logger = logging.getLogger('users')
@@ -54,3 +53,4 @@ class UserUpdateView(UpdateAPIView):
   queryset = User.objects.all()
   serializer_class = UserUpdateSerializer
   permission_classes = [IsAuthenticated]
+

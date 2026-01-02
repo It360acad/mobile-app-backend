@@ -1,6 +1,6 @@
 from courses.models.quiz import Quiz
 from rest_framework import serializers
-from users.serializer import UserSerializer
+from users.serializers import UserSerializer
 
 
 class QuizSerializer(serializers.ModelSerializer):
