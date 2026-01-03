@@ -22,3 +22,8 @@
 [INFO] 2026-01-02 22:45:05 | Tenant: N/A | User: Anonymous | api | GET /api/schema/ | Status: 200 | Duration: 0.53s
 [INFO] 2026-01-02 22:55:04 | Tenant: N/A | User: Anonymous | api | GET /api/docs/ | Status: 200 | Duration: 0.54s
 [INFO] 2026-01-02 22:55:06 | Tenant: N/A | User: Anonymous | api | GET /api/schema/ | Status: 200 | Duration: 0.55s
+[INFO] 2026-01-03 18:50:19 | Tenant: N/A | User: Anonymous | api | GET /api/docs/ | Status: 200 | Duration: 1.82s
+[INFO] 2026-01-03 18:50:21 | Tenant: N/A | User: Anonymous | api | GET /api/schema/ | Status: 200 | Duration: 0.74s
+[INFO] 2026-01-03 18:50:43 | Tenant: N/A | User: Anonymous | api | GET /api/auth/check-email-exists/?email=omosgoerge%40gmail.com | Status: 200 | Duration: 9.52s
+[INFO] 2026-01-03 19:20:30 | Tenant: N/A | User: Anonymous | api | GET /api/docs/ | Status: 200 | Duration: 0.84s
+[INFO] 2026-01-03 19:20:32 | Tenant: N/A | User: Anonymous | api | GET /api/schema/ | Status: 200 | Duration: 0.99s

@@ -23,6 +23,7 @@ class CourseEnrollmentSerializer(serializers.ModelSerializer):
             'last_accessed',
             'progress_percentage',
             'status',
+            'is_completed',
             'total_watch_time_minutes',
             'quiz_average_score',
             'enrollment_notes',

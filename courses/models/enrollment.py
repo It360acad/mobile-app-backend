@@ -89,3 +89,8 @@ class CourseEnrollment(models.Model):
     def is_active(self):
         """Check if enrollment is active"""
         return self.status == 'active'
+
+    @property
+    def is_completed(self):
+        """Check if enrollment is completed"""
+        return self.status == 'completed'

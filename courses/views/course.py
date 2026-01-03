@@ -1,7 +1,4 @@
 
-
-
-
 from rest_framework import viewsets
 from courses.models import Course
 from courses.serializer.course import CourseSerializer, CourseListSerializer

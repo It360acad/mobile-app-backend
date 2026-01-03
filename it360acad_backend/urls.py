@@ -3,7 +3,7 @@ from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework_nested import routers
 
-from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet, CourseEnrollmentViewSet, CertificateViewSet, CourseBookmarkViewSet
+from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet, CourseEnrollmentViewSet, CertificateViewSet, CourseBookmarkViewSet, CourseReviewViewSet, QuizAttemptViewSet
 from users.views import StudentViewSet
 
 # Main router for top-level resources
@@ -13,11 +13,14 @@ router.register(r'courses', CourseViewSet, basename='courses')
 router.register(r'students', StudentViewSet, basename='students')
 router.register(r'certificates', CertificateViewSet, basename='certificates')
 router.register(r'bookmarks', CourseBookmarkViewSet, basename='bookmarks')
+router.register(r'reviews', CourseReviewViewSet, basename='reviews')
+router.register(r'quiz-attempts', QuizAttemptViewSet, basename='quiz-attempts')
 
 # Nested router: courses/{course_id}/enrollments
 courses_router = routers.NestedDefaultRouter(router, r'courses', lookup='course')
 courses_router.register(r'lessons', LessonViewSet, basename='course-lessons')
 courses_router.register(r'enrollments', CourseEnrollmentViewSet, basename='course-enrollments')
+courses_router.register(r'reviews', CourseReviewViewSet, basename='course-reviews')
 
 # Nested router: students/{student_id}/courses (mapped to enrollments)
 students_router = routers.NestedDefaultRouter(router, r'students', lookup='student')
@@ -27,6 +30,10 @@ students_router.register(r'bookmarks', CourseBookmarkViewSet, basename='student-
 # Nested router: lessons/{lesson_id}/quizzes
 lessons_router = routers.NestedDefaultRouter(courses_router, r'lessons', lookup='lesson')
 lessons_router.register(r'quizzes', QuizViewSet, basename='lesson-quizzes')
+
+# Nested router: quizzes/{quiz_id}/attempts
+quizzes_router = routers.NestedDefaultRouter(lessons_router, r'quizzes', lookup='quiz')
+quizzes_router.register(r'attempts', QuizAttemptViewSet, basename='quiz-attempts')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
