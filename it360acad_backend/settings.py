@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'courses',
     'rest_framework',
     'drf_spectacular',
-    'anymail'
+    'anymail',
+    'notification'
 ]
 
 # REST Framework configuration

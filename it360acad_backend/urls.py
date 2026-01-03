@@ -4,6 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 from rest_framework_nested import routers
 
 from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet, CourseEnrollmentViewSet, CertificateViewSet, CourseBookmarkViewSet, CourseReviewViewSet, QuizAttemptViewSet
+from notification.views import NotificationPreferenceViewSet, NotificationViewSet
 from users.views import StudentViewSet
 
 # Main router for top-level resources
@@ -15,6 +16,7 @@ router.register(r'certificates', CertificateViewSet, basename='certificates')
 router.register(r'bookmarks', CourseBookmarkViewSet, basename='bookmarks')
 router.register(r'reviews', CourseReviewViewSet, basename='reviews')
 router.register(r'quiz-attempts', QuizAttemptViewSet, basename='quiz-attempts')
+router.register(r'notifications', NotificationViewSet, basename='notifications')
 
 # Nested router: courses/{course_id}/enrollments
 courses_router = routers.NestedDefaultRouter(router, r'courses', lookup='course')
@@ -35,6 +37,10 @@ lessons_router.register(r'quizzes', QuizViewSet, basename='lesson-quizzes')
 quizzes_router = routers.NestedDefaultRouter(lessons_router, r'quizzes', lookup='quiz')
 quizzes_router.register(r'attempts', QuizAttemptViewSet, basename='quiz-attempts')
 
+# Nested router: notifications
+notification_router = routers.NestedDefaultRouter(router, r'notifications', lookup='notification')
+notification_router.register(r'preferences', NotificationPreferenceViewSet, basename='notification-preferences')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -54,6 +60,7 @@ urlpatterns = [
     path('api/', include(courses_router.urls)),
     path('api/', include(students_router.urls)),
     path('api/', include(lessons_router.urls)),
+    path('api/', include(notification_router.urls)),
 ]
 
 # This creates these endpoints:
