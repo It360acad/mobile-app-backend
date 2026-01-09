@@ -31,7 +31,16 @@ def send_enrollment_notification(sender, instance: CourseEnrollment, created, **
       recipient_type='student',
       is_read=False
     )
-    logger.info(f"Enrollment notification sent to user: {instance.user.email}")
+    logger.info(f"Enrollment notification created for user: {instance.user.email}")
+    
+    # Send email notification asynchronously using Celery
+    try:
+      from .tasks import send_notification_email
+      send_notification_email.delay(notification.id)
+      logger.info(f"Email notification queued for notification {notification.id}")
+    except Exception as e:
+      logger.error(f"Failed to queue email notification: {str(e)}")
+    
     return notification
 
 
