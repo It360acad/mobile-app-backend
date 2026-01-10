@@ -48,8 +48,67 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'anymail',
-    'notification'
+    'notification',
+    'channels',
+    'chat'
 ]
+
+
+# Channels configuration
+ASGI_APPLICATION = 'it360acad_backend.asgi.application'
+
+# Upstash Redis configuration for Channels
+REDIS_URL = os.getenv('REDIS_URL') or os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+
+# Channel layers configuration (uses database 2 for channels, separate from Celery and cache)
+if REDIS_URL and (REDIS_URL.startswith('rediss://') or REDIS_URL.startswith('redis://')):
+    # Parse Redis URL for channels (use database 2)
+    import re
+    from urllib.parse import urlparse
+    
+    # Parse the Redis URL
+    parsed = urlparse(REDIS_URL.replace('rediss://', 'redis://'))
+    
+    # Extract components
+    host = parsed.hostname
+    port = parsed.port or 6379
+    password = parsed.password
+    db = 2  # Use database 2 for channels
+    
+    # Build connection config
+    if REDIS_URL.startswith('rediss://'):
+        # For TLS connections
+        import ssl
+        connection_config = {
+            'address': (host, port),
+            'ssl': True,
+            'ssl_cert_reqs': ssl.CERT_NONE,
+        }
+        if password:
+            connection_config['password'] = password
+    else:
+        # For non-TLS connections
+        connection_config = {
+            'address': (host, port),
+        }
+        if password:
+            connection_config['password'] = password
+    
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [connection_config],
+            },
+        },
+    }
+else:
+    # Fallback to in-memory channel layer for development
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 # REST Framework configuration
 REST_FRAMEWORK = {

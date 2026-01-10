@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from rest_framework_nested import routers
-
 from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet, CourseEnrollmentViewSet, CertificateViewSet, CourseBookmarkViewSet, CourseReviewViewSet, QuizAttemptViewSet
 from notification.views import NotificationPreferenceViewSet, NotificationViewSet
 from users.views import StudentViewSet
@@ -61,6 +60,9 @@ urlpatterns = [
     path('api/', include(students_router.urls)),
     path('api/', include(lessons_router.urls)),
     path('api/', include(notification_router.urls)),
+
+    # Note: WebSocket routes are handled by ASGI (see it360acad_backend/asgi.py)
+    # WebSocket endpoint: ws://domain/ws/chat/<parent_id>/
 ]
 
 # This creates these endpoints:

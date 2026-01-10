@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Startup script for Render deployment
-# Runs both Django/Gunicorn and Celery worker in the same service
+# Runs Django/Daphne (for WebSocket support), Celery worker, and Gunicorn in the same service
 # This script MUST be used as the Start Command in Render dashboard
 
 set -o errexit
@@ -22,10 +22,11 @@ celery -A it360acad_backend worker \
 # Wait a moment for Celery to start
 sleep 2
 
-# Start gunicorn (this will be the main process)
+# Start Daphne (ASGI server) for WebSocket support
+# Daphne handles both HTTP and WebSocket connections
 # The --bind parameter MUST come last to override any Render-added bind settings
-echo "🚀 Starting Django/Gunicorn on port ${PORT}..."
-exec gunicorn it360acad_backend.wsgi:application \
-    --config gunicorn_config.py \
-    --bind "0.0.0.0:${PORT}"
+echo "🚀 Starting Daphne (ASGI) server on port ${PORT}..."
+echo "📍 HTTP endpoint: http://0.0.0.0:${PORT}"
+echo "🔌 WebSocket endpoint: ws://0.0.0.0:${PORT}/ws/chat/<parent_id>/"
+exec daphne -b 0.0.0.0 -p ${PORT} it360acad_backend.asgi:application
 

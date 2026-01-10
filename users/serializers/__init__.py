@@ -6,6 +6,7 @@ from .user import (
     LinkChildSerializer
 )
 from .student import StudentSerializer
+from .parent import ParentSerializer
 
 __all__ = [
     'UserSerializer', 
@@ -14,5 +15,6 @@ __all__ = [
     'UserUpdateSerializer',
     'StudentSerializer',
     'LinkChildSerializer',
+    'ParentSerializer',
 ]
 
