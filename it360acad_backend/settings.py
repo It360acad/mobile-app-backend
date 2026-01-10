@@ -298,5 +298,46 @@ CELERY_TASK_ROUTES = {
     # Add more routes as needed for other apps
 }
 
+# Django Cache Configuration (using Redis/Upstash)
+# Use the same Redis connection as Celery, but with a different database number
+redis_url = os.getenv('REDIS_URL') or os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+# Use database 1 for cache (Celery uses database 0)
+if redis_url.startswith('rediss://'):
+    # For TLS connections, replace /0 with /1
+    cache_url = redis_url.rsplit('/', 1)[0] + '/1'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': cache_url,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'SSL_CERT_REQS': ssl.CERT_NONE,  # Upstash uses self-signed certificates
+            },
+            'KEY_PREFIX': 'it360acad',
+            'TIMEOUT': 3600,  # Default timeout: 1 hour
+        }
+    }
+elif redis_url.startswith('redis://'):
+    cache_url = redis_url.rsplit('/', 1)[0] + '/1'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': cache_url,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+            'KEY_PREFIX': 'it360acad',
+            'TIMEOUT': 3600,  # Default timeout: 1 hour
+        }
+    }
+else:
+    # Fallback to local memory cache if Redis not configured
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
+
 # Logging Configuration
 from .logger.Logger import LOGGING
