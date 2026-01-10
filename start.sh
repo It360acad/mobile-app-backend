@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Startup script for Render deployment
-# Runs Django/Daphne (for WebSocket support), Celery worker, and Gunicorn in the same service
+# Runs Django/Daphne (ASGI server) for both HTTP and WebSocket support, plus Celery worker
 # This script MUST be used as the Start Command in Render dashboard
+# Note: Daphne handles both REST API (HTTP) and Chat (WebSocket) connections
 
 set -o errexit
 

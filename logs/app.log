@@ -16,3 +16,8 @@ Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will 
 Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
 
 [INFO] 2026-01-10 12:23:03 | Tenant: N/A | User: Anonymous | celery.app.trace | Task notification.tasks.test_celery_connection[dcc87771-4e15-48e5-8f4e-e42bcaa662de] succeeded in 0.04539565600134665s: {'message': 'Sync test from management command', 'timestamp': '2026-01-10T12:23:03.598370+00:00', 'status': 'success', 'worker_received': True}
+[INFO] 2026-01-10 20:33:23 | Tenant: N/A | User: Anonymous | daphne.cli | Starting server at tcp:port=8000:interface=127.0.0.1
+[INFO] 2026-01-10 20:33:23 | Tenant: N/A | User: Anonymous | daphne.server | HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+[INFO] 2026-01-10 20:33:23 | Tenant: N/A | User: Anonymous | daphne.server | Configuring endpoint tcp:port=8000:interface=127.0.0.1
+[INFO] 2026-01-10 20:33:23 | Tenant: N/A | User: Anonymous | daphne.server | Listening on TCP address 127.0.0.1:8000
+[INFO] 2026-01-10 20:36:07 | Tenant: N/A | User: Anonymous | daphne.server | Killed 0 pending application instances
