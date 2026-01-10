@@ -196,3 +196,26 @@ def cleanup_old_notifications(days_old=90):
     except Exception as e:
         logger.error(f"Error cleaning up old notifications: {str(e)}")
         return 0
+
+
+@shared_task
+def test_celery_connection(message="Hello from Celery!"):
+    """
+    Simple test task to verify Celery is working.
+    
+    Args:
+        message: Test message to return
+        
+    Returns:
+        dict: Test result with message and timestamp
+    """
+    import time
+    result = {
+        'message': message,
+        'timestamp': timezone.now().isoformat(),
+        'status': 'success',
+        'worker_received': True
+    }
+    logger.info(f"Test task executed successfully: {message}")
+    print(f"✅ Celery test task executed! Message: {message}")
+    return result

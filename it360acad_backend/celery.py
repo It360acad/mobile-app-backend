@@ -19,6 +19,20 @@ app = Celery('it360acad_backend')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+# Explicitly override broker_url from Django settings after config is loaded
+# This ensures REDIS_URL takes precedence over any old CELERY_BROKER_URL values
+try:
+    import django
+    django.setup()
+    from django.conf import settings
+    if hasattr(settings, 'CELERY_BROKER_URL'):
+        app.conf.broker_url = settings.CELERY_BROKER_URL
+    if hasattr(settings, 'CELERY_RESULT_BACKEND'):
+        app.conf.result_backend = settings.CELERY_RESULT_BACKEND
+except Exception:
+    # Django might not be initialized yet, settings will be loaded when Django starts
+    pass
+
 # Load task modules from all registered Django apps.
 # This allows tasks to be defined in any app's tasks.py file
 app.autodiscover_tasks()

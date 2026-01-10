@@ -1,1 +1,18 @@
 [INFO] 2026-01-02 13:33:28 | Tenant: N/A | User: 16 | users | User super2@gmail.com is retrieving the list of all users.
+[WARNING] 2026-01-10 12:07:31 | Tenant: N/A | User: Anonymous | kombu.connection | Secure redis scheme specified (rediss) with no ssl options, defaulting to insecure SSL behaviour.
+[WARNING] 2026-01-10 12:07:33 | Tenant: N/A | User: Anonymous | kombu.connection | Secure redis scheme specified (rediss) with no ssl options, defaulting to insecure SSL behaviour.
+[WARNING] 2026-01-10 12:07:33 | Tenant: N/A | User: Anonymous | kombu.connection | Secure redis scheme specified (rediss) with no ssl options, defaulting to insecure SSL behaviour.
+[WARNING] 2026-01-10 12:08:04 | Tenant: N/A | User: Anonymous | kombu.connection | Secure redis scheme specified (rediss) with no ssl options, defaulting to insecure SSL behaviour.
+[WARNING] 2026-01-10 12:08:06 | Tenant: N/A | User: Anonymous | kombu.connection | Secure redis scheme specified (rediss) with no ssl options, defaulting to insecure SSL behaviour.
+[WARNING] 2026-01-10 12:08:06 | Tenant: N/A | User: Anonymous | kombu.connection | Secure redis scheme specified (rediss) with no ssl options, defaulting to insecure SSL behaviour.
+[WARNING] 2026-01-10 12:08:27 | Tenant: N/A | User: Anonymous | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[WARNING] 2026-01-10 12:22:22 | Tenant: N/A | User: Anonymous | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[INFO] 2026-01-10 12:23:03 | Tenant: N/A | User: Anonymous | notification | Test task executed successfully: Sync test from management command
+[WARNING] 2026-01-10 12:23:03 | Tenant: N/A | User: Anonymous | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[INFO] 2026-01-10 12:23:03 | Tenant: N/A | User: Anonymous | celery.app.trace | Task notification.tasks.test_celery_connection[dcc87771-4e15-48e5-8f4e-e42bcaa662de] succeeded in 0.04539565600134665s: {'message': 'Sync test from management command', 'timestamp': '2026-01-10T12:23:03.598370+00:00', 'status': 'success', 'worker_received': True}

@@ -261,9 +261,23 @@ ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
 if ADMIN_EMAIL:
     ADMINS = [('Admin', ADMIN_EMAIL)]
 
-# Celery Configuration
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+
+redis_url = os.getenv('REDIS_URL')
+celery_broker = os.getenv('CELERY_BROKER_URL', '')
+if celery_broker and not celery_broker.startswith(('redis://', 'rediss://')):
+    celery_broker = None
+CELERY_BROKER_URL = redis_url or celery_broker or 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND') or CELERY_BROKER_URL
+
+# SSL Configuration for Upstash Redis (required when using rediss:// with TLS)
+if CELERY_BROKER_URL.startswith('rediss://'):
+    import ssl
+    CELERY_BROKER_USE_SSL = {
+        'ssl_cert_reqs': ssl.CERT_NONE,  # Upstash uses self-signed certificates
+    }
+    CELERY_REDIS_BACKEND_USE_SSL = {
+        'ssl_cert_reqs': ssl.CERT_NONE,
+    }
 
 # Celery settings
 CELERY_ACCEPT_CONTENT = ['json']
