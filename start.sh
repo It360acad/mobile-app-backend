@@ -27,7 +27,10 @@ sleep 2
 # Daphne handles both HTTP and WebSocket connections
 # The --bind parameter MUST come last to override any Render-added bind settings
 echo "🚀 Starting Daphne (ASGI) server on port ${PORT}..."
-echo "📍 HTTP endpoint: http://0.0.0.0:${PORT}"
-echo "🔌 WebSocket endpoint: ws://0.0.0.0:${PORT}/ws/chat/<parent_id>/"
+echo "📍 HTTP endpoint: http://0.0.0.0:${PORT} (internal)"
+echo "🔌 WebSocket endpoint: ws://0.0.0.0:${PORT}/ws/chat/<parent_id>/ (internal)"
+echo "✅ Server ready! Use your Render domain for public access:"
+echo "   HTTP: https://your-app.onrender.com"
+echo "   WebSocket: wss://your-app.onrender.com/ws/chat/<parent_id>/?token=<jwt_token>"
 exec daphne -b 0.0.0.0 -p ${PORT} it360acad_backend.asgi:application
 
