@@ -1,8 +1,14 @@
 #!/bin/bash
-# Script to start Celery worker in the background
+# Script to start Celery worker in the background (for local development)
+# For Render deployment: Use start.sh which runs both Django and Celery
 
-# Activate virtual environment
-source .venv/bin/activate
+# Activate virtual environment (if exists)
+if [ -d ".venv" ]; then
+    source .venv/bin/activate
+fi
+
+# Create logs directory if it doesn't exist
+mkdir -p logs
 
 # Start Celery worker
 echo "🚀 Starting Celery worker..."
