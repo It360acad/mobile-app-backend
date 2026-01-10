@@ -5,6 +5,7 @@ from .user import (
     LinkChildView
 )
 from .student import StudentViewSet
+from .parent import ParentViewSet, ParentChildrenCoursesView
 
 __all__ = [
     'UserListView',
@@ -12,5 +13,7 @@ __all__ = [
     'UserUpdateView',
     'LinkChildView',
     'StudentViewSet',
+    'ParentViewSet',
+    'ParentChildrenCoursesView',
 ]
 
