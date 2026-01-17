@@ -3,10 +3,26 @@ from signal import default_int_handler
 from dotenv import load_dotenv
 from pathlib import Path
 import dj_database_url
+import warnings
+import sys
+from contextlib import redirect_stderr
+from io import StringIO
 
+# Suppress python-dotenv warnings for parsing errors
+warnings.filterwarnings('ignore', category=UserWarning, module='dotenv')
 
-load_dotenv()  # Load .env
-load_dotenv('.env.local')  # Load .env.local (takes precedence)
+# Load .env files with error handling (suppress stderr output from parsing errors)
+try:
+    with redirect_stderr(StringIO()):
+        load_dotenv(verbose=False)  # Load .env
+except Exception:
+    pass
+
+try:
+    with redirect_stderr(StringIO()):
+        load_dotenv('.env.local', verbose=False)  # Load .env.local (takes precedence)
+except Exception:
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,12 +41,17 @@ else:
 AUTH_USER_MODEL = 'users.User'
 
 if not DEBUG:
+    # HTTPS Security Settings (Required for production)
+    SECURE_SSL_REDIRECT = True  # Redirect all HTTP to HTTPS
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # Trust proxy headers (Render, etc.)
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_BROWSER_XSS_FILTER = True
     X_FRAME_OPTIONS = 'DENY'    #  Prevent clickjacking attacks
     SECURE_HSTS_SECONDS = 31536000  #  HSTS for 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True  #  HSTS for all subdomains
     SECURE_HSTS_PRELOAD = True  #  HSTS for preload
+    SESSION_COOKIE_SECURE = True  # Only send session cookies over HTTPS
+    CSRF_COOKIE_SECURE = True  # Only send CSRF cookies over HTTPS
 
 
 #  Application definition
@@ -50,7 +71,8 @@ INSTALLED_APPS = [
     'anymail',
     'notification',
     'channels',
-    'chat'
+    'chat',
+    'payments',
 ]
 
 
@@ -400,3 +422,53 @@ else:
 
 # Logging Configuration
 from .logger.Logger import LOGGING
+
+
+# PAYMENT SETTINGS
+PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY')
+PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY')
+
+# Validate secret keys in production
+if not DEBUG:
+    # Validate Django SECRET_KEY
+    if SECRET_KEY == 'django-insecure-dev-key-change-in-production':
+        raise ValueError(
+            "SECRET_KEY must be set in production! "
+            "Set SECRET_KEY environment variable with a secure random value."
+        )
+    
+    # Validate Paystack keys
+    if not PAYSTACK_SECRET_KEY:
+        raise ValueError(
+            "PAYSTACK_SECRET_KEY must be set in production! "
+            "Set PAYSTACK_SECRET_KEY environment variable."
+        )
+    
+    if not PAYSTACK_PUBLIC_KEY:
+        raise ValueError(
+            "PAYSTACK_PUBLIC_KEY must be set in production! "
+            "Set PAYSTACK_PUBLIC_KEY environment variable."
+        )
+    
+    # Warn if keys look insecure (too short or contain common patterns)
+    if len(SECRET_KEY) < 50:
+        import warnings
+        warnings.warn(
+            "SECRET_KEY appears to be too short. Use a longer, randomly generated key.",
+            UserWarning
+        )
+    
+    if PAYSTACK_SECRET_KEY and len(PAYSTACK_SECRET_KEY) < 20:
+        import warnings
+        warnings.warn(
+            "PAYSTACK_SECRET_KEY appears to be too short. Verify your Paystack secret key.",
+            UserWarning
+        )
+else:
+    # Development warnings (suppressed for expected missing keys)
+    if SECRET_KEY == 'django-insecure-dev-key-change-in-production':
+        # Only warn in development if explicitly needed
+        pass  # Suppressed: expected in development
+    
+    # Suppress PAYSTACK key warnings in development - they're expected to be missing
+    # Payment features will fail gracefully if keys are not set

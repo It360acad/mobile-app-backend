@@ -5,6 +5,7 @@ from rest_framework_nested import routers
 from courses.views import CategoryViewSet, CourseViewSet, LessonViewSet, QuizViewSet, CourseEnrollmentViewSet, CertificateViewSet, CourseBookmarkViewSet, CourseReviewViewSet, QuizAttemptViewSet
 from notification.views import NotificationPreferenceViewSet, NotificationViewSet
 from users.views import StudentViewSet
+from payments.views import PaymentViewSet, paystack_webhook
 
 # Main router for top-level resources
 router = routers.DefaultRouter()
@@ -16,6 +17,7 @@ router.register(r'bookmarks', CourseBookmarkViewSet, basename='bookmarks')
 router.register(r'reviews', CourseReviewViewSet, basename='reviews')
 router.register(r'quiz-attempts', QuizAttemptViewSet, basename='quiz-attempts')
 router.register(r'notifications', NotificationViewSet, basename='notifications')
+router.register(r'payments', PaymentViewSet, basename='payments')
 
 # Nested router: courses/{course_id}/enrollments
 courses_router = routers.NestedDefaultRouter(router, r'courses', lookup='course')
@@ -40,6 +42,8 @@ quizzes_router.register(r'attempts', QuizAttemptViewSet, basename='quiz-attempts
 notification_router = routers.NestedDefaultRouter(router, r'notifications', lookup='notification')
 notification_router.register(r'preferences', NotificationPreferenceViewSet, basename='notification-preferences')
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -63,6 +67,10 @@ urlpatterns = [
 
     # Note: WebSocket routes are handled by ASGI (see it360acad_backend/asgi.py)
     # WebSocket endpoint: ws://domain/ws/chat/<parent_id>/
+
+    # Payments
+    path('api/webhook/paystack/', paystack_webhook, name='paystack_webhook'),
+    
 ]
 
 # This creates these endpoints:

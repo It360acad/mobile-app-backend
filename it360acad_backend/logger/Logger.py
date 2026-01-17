@@ -132,6 +132,12 @@ LOGGING = {
             'propagate': False,
         },
         
+        'payments': {
+            'handlers': ['security_file', 'app_file', 'console', 'error_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        
         '': {
             'handlers': ['console', 'app_file'],
             'level': 'INFO',

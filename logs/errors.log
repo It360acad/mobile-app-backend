@@ -138,3 +138,4 @@ Traceback (most recent call last):
     ...<2 lines>...
     )
 django.core.exceptions.ImproperlyConfigured: Field name `paid_by_parent` is not valid for model `CourseEnrollment` in `courses.serializer.enrollment.CourseEnrollmentSerializer`.
+[ERROR] 2026-01-16 12:07:55 | Tenant: N/A | User: Webhook | payments | Webhook request missing signature header from IP: 127.0.0.1
