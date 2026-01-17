@@ -63,8 +63,7 @@ class CourseEnrollmentViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Student enrolls in course"""
         
-        # Only students can enroll
-        if request.user.role != 'student':
+        if not hasattr(request.user, 'student_profile'):
             return Response(
                 {'error': 'Only students can enroll in courses.'},
                 status=status.HTTP_403_FORBIDDEN
