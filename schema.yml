@@ -1,0 +1,5312 @@
+openapi: 3.0.3
+info:
+  title: IT360 Academy API
+  version: 1.0.0
+  description: API documentation for IT360 Academy
+paths:
+  /api/auth/check-email-exists/:
+    get:
+      operationId: auth_check_email_exists_retrieve
+      description: Check if email exists in the database. Provide email as a query
+        parameter.
+      summary: Check if email exists in the database
+      parameters:
+      - in: query
+        name: email
+        schema:
+          type: string
+          format: email
+        description: Email address to check
+        required: true
+      tags:
+      - Authentication
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/auth/delete-account/:
+    post:
+      operationId: auth_delete_account_create
+      description: Delete a user's account. Users can delete their own account (password
+        required). Admins can delete any user's account (password not required).
+      summary: Delete Account
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccount'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeleteAccount'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeleteAccount'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAccount'
+          description: ''
+  /api/auth/forget-password/:
+    post:
+      operationId: auth_forget_password_create
+      description: Request a password reset OTP. An OTP will be sent to the user's
+        email.
+      summary: Forget Password
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgetPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ForgetPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ForgetPassword'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgetPassword'
+          description: ''
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: Authenticate a user with email and password. Returns user data
+        and JWT tokens.
+      summary: User Login
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+  /api/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: Logout a user. Invalidates the refresh token.
+      summary: Logout User
+      tags:
+      - Authentication
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/auth/me/:
+    get:
+      operationId: auth_me_retrieve
+      description: Get the details of the currently logged-in user.
+      summary: Get User Profile
+      tags:
+      - Authentication
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: auth_register_create
+      description: Register a new user. An OTP will be sent to the user's email for
+        verification.
+      summary: User Registration
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/resend-otp/:
+    post:
+      operationId: auth_resend_otp_create
+      description: Resend OTP code to user's email. Can be used for registration or
+        password reset.
+      summary: Resend OTP
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOTP'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendOTP'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendOTP'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResendOTP'
+          description: ''
+  /api/auth/reset-password/:
+    post:
+      operationId: auth_reset_password_create
+      description: Reset a user's password using the OTP code sent to their email.
+      summary: Reset Password
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetPassword'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPassword'
+          description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: Refresh JWT access token using refresh token.
+      summary: Refresh Token
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/auth/verify-otp/:
+    post:
+      operationId: auth_verify_otp_create
+      description: Verify OTP code sent to user's email. Returns JWT tokens upon successful
+        verification.
+      summary: Verify OTP
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OTPVerification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OTPVerification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OTPVerification'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OTPVerification'
+          description: ''
+  /api/bookmarks/:
+    get:
+      operationId: bookmarks_list
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - bookmarks
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    post:
+      operationId: bookmarks_create
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - bookmarks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+  /api/bookmarks/{id}/:
+    get:
+      operationId: bookmarks_retrieve
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - bookmarks
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    put:
+      operationId: bookmarks_update
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - bookmarks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    patch:
+      operationId: bookmarks_partial_update
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      tags:
+      - bookmarks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseBookmark'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseBookmark'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseBookmark'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    delete:
+      operationId: bookmarks_destroy
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - bookmarks
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/categories/:
+    get:
+      operationId: categories_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - categories
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryList'
+          description: ''
+    post:
+      operationId: categories_create
+      tags:
+      - categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Category'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/categories/{slug}/:
+    get:
+      operationId: categories_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - categories
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    put:
+      operationId: categories_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Category'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    patch:
+      operationId: categories_partial_update
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCategory'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+    delete:
+      operationId: categories_destroy
+      description: Custom delete to check if category has courses
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - categories
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/certificates/:
+    get:
+      operationId: certificates_list
+      description: |-
+        ViewSet for viewing certificates.
+        Certificates are created by the system upon course completion.
+      tags:
+      - certificates
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+          description: ''
+  /api/certificates/{id}/:
+    get:
+      operationId: certificates_retrieve
+      description: |-
+        ViewSet for viewing certificates.
+        Certificates are created by the system upon course completion.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Certificate.
+        required: true
+      tags:
+      - certificates
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Certificate'
+          description: ''
+  /api/courses/:
+    get:
+      operationId: courses_list
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseList'
+          description: ''
+    post:
+      operationId: courses_create
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Course'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Course'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+  /api/courses/{course_pk}/enrollments/:
+    get:
+      operationId: courses_enrollments_list
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    post:
+      operationId: courses_enrollments_create
+      description: Student enrolls in course
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentEnrollmentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentEnrollmentCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentEnrollmentCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentEnrollmentCreate'
+          description: ''
+  /api/courses/{course_pk}/enrollments/{id}/:
+    get:
+      operationId: courses_enrollments_retrieve
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    put:
+      operationId: courses_enrollments_update
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    patch:
+      operationId: courses_enrollments_partial_update
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseEnrollment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseEnrollment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseEnrollment'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    delete:
+      operationId: courses_enrollments_destroy
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/courses/{course_pk}/enrollments/{id}/drop/:
+    post:
+      operationId: courses_enrollments_drop_create
+      description: Drop a course
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+  /api/courses/{course_pk}/enrollments/my_enrollments/:
+    get:
+      operationId: courses_enrollments_my_enrollments_retrieve
+      description: Get current user's enrollments (student view)
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+  /api/courses/{course_pk}/lessons/:
+    get:
+      operationId: courses_lessons_list
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LessonList'
+          description: ''
+    post:
+      operationId: courses_lessons_create
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/courses/{course_pk}/lessons/{lesson_pk}/quizzes/:
+    get:
+      operationId: courses_lessons_quizzes_list
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: lesson_pk
+        schema:
+          type: integer
+        description: Lesson ID (from nested route)
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizList'
+          description: ''
+    post:
+      operationId: courses_lessons_quizzes_create
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: lesson_pk
+        schema:
+          type: integer
+        description: Lesson ID (from nested route)
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quiz'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Quiz'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Quiz'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/courses/{course_pk}/lessons/{lesson_pk}/quizzes/{id}/:
+    get:
+      operationId: courses_lessons_quizzes_retrieve
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      - in: path
+        name: lesson_pk
+        schema:
+          type: integer
+        description: Lesson ID (from nested route)
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    put:
+      operationId: courses_lessons_quizzes_update
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      - in: path
+        name: lesson_pk
+        schema:
+          type: integer
+        description: Lesson ID (from nested route)
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quiz'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Quiz'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Quiz'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    patch:
+      operationId: courses_lessons_quizzes_partial_update
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      - in: path
+        name: lesson_pk
+        schema:
+          type: integer
+        description: Lesson ID (from nested route)
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuiz'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuiz'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuiz'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    delete:
+      operationId: courses_lessons_quizzes_destroy
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz.
+        required: true
+      - in: path
+        name: lesson_pk
+        schema:
+          type: integer
+        description: Lesson ID (from nested route)
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/courses/{course_pk}/lessons/{id}/:
+    get:
+      operationId: courses_lessons_retrieve
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Lesson.
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    put:
+      operationId: courses_lessons_update
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Lesson.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Lesson'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    patch:
+      operationId: courses_lessons_partial_update
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Lesson.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLesson'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLesson'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLesson'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    delete:
+      operationId: courses_lessons_destroy
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Lesson.
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/courses/{course_pk}/reviews/:
+    get:
+      operationId: courses_reviews_list
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseReview'
+          description: ''
+    post:
+      operationId: courses_reviews_create
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+  /api/courses/{course_pk}/reviews/{id}/:
+    get:
+      operationId: courses_reviews_retrieve
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+    put:
+      operationId: courses_reviews_update
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+    patch:
+      operationId: courses_reviews_partial_update
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseReview'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+    delete:
+      operationId: courses_reviews_destroy
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/courses/{id}/:
+    get:
+      operationId: courses_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course.
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+    put:
+      operationId: courses_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Course'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Course'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+    patch:
+      operationId: courses_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course.
+        required: true
+      tags:
+      - courses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourse'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+          description: ''
+    delete:
+      operationId: courses_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course.
+        required: true
+      tags:
+      - courses
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/notifications/:
+    get:
+      operationId: notifications_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/{notification_pk}/preferences/:
+    get:
+      operationId: notifications_preferences_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Preference ID
+        required: true
+      - in: path
+        name: notification_pk
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+  /api/notifications/{notification_pk}/preferences/{id}/:
+    get:
+      operationId: notifications_preferences_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Preference ID
+        required: true
+      - in: path
+        name: notification_pk
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+    put:
+      operationId: notifications_preferences_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Preference ID
+        required: true
+      - in: path
+        name: notification_pk
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NotificationPreference'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+    patch:
+      operationId: notifications_preferences_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Preference ID
+        required: true
+      - in: path
+        name: notification_pk
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNotificationPreference'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPreference'
+          description: ''
+  /api/notifications/{id}/:
+    get:
+      operationId: notifications_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/{id}/mark_read/:
+    post:
+      operationId: notifications_mark_read_create
+      description: Mark as read
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/mark_all_read/:
+    post:
+      operationId: notifications_mark_all_read_create
+      description: Mark all as read
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Notification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/notifications/unread/:
+    get:
+      operationId: notifications_unread_retrieve
+      description: Get unread count
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Notification ID
+        required: true
+      tags:
+      - notifications
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/payments/:
+    get:
+      operationId: payments_list
+      description: Get a list of all payments for the authenticated user. Staff users
+        can see all payments.
+      summary: List Payments
+      tags:
+      - Payments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+          description: ''
+    post:
+      operationId: payments_create
+      description: 'Create a new payment record. Note: Use the initialize endpoint
+        to start a payment.'
+      summary: Create Payment
+      tags:
+      - Payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Payment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/payments/{id}/:
+    get:
+      operationId: payments_retrieve
+      description: Retrieve details of a specific payment by ID.
+      summary: Get Payment Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this payment.
+        required: true
+      tags:
+      - Payments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+    put:
+      operationId: payments_update
+      description: Update a payment record.
+      summary: Update Payment
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this payment.
+        required: true
+      tags:
+      - Payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Payment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+    patch:
+      operationId: payments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this payment.
+        required: true
+      tags:
+      - payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPayment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPayment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPayment'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+    delete:
+      operationId: payments_destroy
+      description: Delete a payment record.
+      summary: Delete Payment
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this payment.
+        required: true
+      tags:
+      - Payments
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/payments/callback/:
+    get:
+      operationId: payments_callback_retrieve
+      description: "\n        Handle Paystack redirect callback after payment.\n        \n
+        \       This is an optional endpoint that Paystack can redirect to after payment.\n
+        \       It returns the payment reference for verification.\n        \n        **Note:**
+        Payment status is still updated via webhook, not this callback.\n        "
+      summary: Payment Callback
+      parameters:
+      - in: query
+        name: reference
+        schema:
+          type: string
+        description: Payment reference from Paystack
+        required: true
+      tags:
+      - Payments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  reference:
+                    type: string
+                  message:
+                    type: string
+          description: Callback processed
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: No reference provided
+          description: No reference provided
+  /api/payments/initialize/:
+    post:
+      operationId: payments_initialize_create
+      description: "\n        Initialize a payment transaction with Paystack.\n        \n
+        \       This endpoint:\n        1. Creates a payment record in the database\n
+        \       2. Initializes the payment with Paystack\n        3. Returns an authorization
+        URL for the user to complete payment\n        \n        **Important:** After
+        payment, the status is updated via webhook, not client-side.\n        \n        **Request
+        Body:**\n        - `amount`: Payment amount (decimal, e.g., 59741.60)\n        -
+        `email`: Payer's email address\n        - `metadata`: (Optional) JSON object
+        with additional context\n        \n        **Metadata Examples:**\n        ```json\n
+        \       {\n          \"course_id\": \"123\",\n          \"student_id\": \"456\",\n
+        \         \"purpose\": \"course_purchase\",\n          \"description\": \"Payment
+        for Python Course Bundle\"\n        }\n        ```\n        \n        Or for
+        multiple courses:\n        ```json\n        {\n          \"course_ids\": [\"123\",
+        \"124\", \"125\"],\n          \"student_id\": \"456\",\n          \"purpose\":
+        \"course_purchase\"\n        }\n        ```\n        \n        **Note:** Metadata
+        is optional. If not provided, use `null` or omit the field.\n        "
+      summary: Initialize Payment
+      tags:
+      - Payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - amount
+              - email
+              properties:
+                amount:
+                  type: number
+                  format: decimal
+                  description: Payment amount
+                  example: 59741.6
+                email:
+                  type: string
+                  format: email
+                  description: Payer email address
+                  example: user@example.com
+                metadata:
+                  type: object
+                  description: Optional JSON object for additional payment context.
+                    All values must be strings.
+                  required: false
+                  properties:
+                    course_id:
+                      type: string
+                      description: ID of the course being purchased
+                      example: '123'
+                    student_id:
+                      type: string
+                      description: ID of the student enrolling
+                      example: '456'
+                    purpose:
+                      type: string
+                      description: Type of payment (e.g., course_purchase, subscription)
+                      example: course_purchase
+                    description:
+                      type: string
+                      description: Human-readable description of the payment
+                      example: Payment for Python Course Bundle
+                  example:
+                    course_id: '123'
+                    student_id: '456'
+                    purpose: course_purchase
+                    description: Payment for Python Course Bundle
+              example:
+                amount: 59741.6
+                email: user@example.com
+                metadata:
+                  course_id: '123'
+                  student_id: '456'
+                  purpose: course_purchase
+                  description: Payment for Python Course Bundle
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Payment initialized
+                  data:
+                    type: object
+                    properties:
+                      authorization_url:
+                        type: string
+                        format: uri
+                        description: URL to redirect user for payment
+                      access_code:
+                        type: string
+                        description: Paystack access code
+                      reference:
+                        type: string
+                        description: Payment reference for tracking
+          description: Payment initialized successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+          description: Invalid request data or payment initialization failed
+  /api/payments/verify/:
+    post:
+      operationId: payments_verify_create
+      description: "\n        Check the current status of a payment by reference.\n
+        \       \n        **Important:** This is a READ-ONLY endpoint. Payment status
+        is ONLY updated via webhook for security.\n        This endpoint only returns
+        the current status from the database.\n        \n        **Security Note:**
+        Never trust client-side verification. Always verify payments server-side via
+        webhook.\n        "
+      summary: Verify Payment Status
+      tags:
+      - Payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentVerify'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Payment status retrieved
+                  data:
+                    type: object
+                    properties:
+                      reference:
+                        type: string
+                      status:
+                        type: string
+                        enum:
+                        - pending
+                        - completed
+                        - failed
+                      verified_via_webhook:
+                        type: boolean
+                      amount:
+                        type: string
+                      email:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+          description: Payment status retrieved successfully
+        '404':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Payment not found
+          description: Payment not found
+  /api/quiz-attempts/:
+    get:
+      operationId: quiz_attempts_list
+      description: |-
+        ViewSet for tracking quiz attempts.
+        - Students can start and complete attempts.
+        - Admins can see all attempts.
+      tags:
+      - quiz-attempts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+    post:
+      operationId: quiz_attempts_create
+      description: |-
+        ViewSet for tracking quiz attempts.
+        - Students can start and complete attempts.
+        - Admins can see all attempts.
+      tags:
+      - quiz-attempts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+  /api/quiz-attempts/{id}/:
+    get:
+      operationId: quiz_attempts_retrieve
+      description: |-
+        ViewSet for tracking quiz attempts.
+        - Students can start and complete attempts.
+        - Admins can see all attempts.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz Attempt.
+        required: true
+      tags:
+      - quiz-attempts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+    put:
+      operationId: quiz_attempts_update
+      description: |-
+        ViewSet for tracking quiz attempts.
+        - Students can start and complete attempts.
+        - Admins can see all attempts.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz Attempt.
+        required: true
+      tags:
+      - quiz-attempts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+    patch:
+      operationId: quiz_attempts_partial_update
+      description: |-
+        ViewSet for tracking quiz attempts.
+        - Students can start and complete attempts.
+        - Admins can see all attempts.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz Attempt.
+        required: true
+      tags:
+      - quiz-attempts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizAttempt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizAttempt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizAttempt'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+    delete:
+      operationId: quiz_attempts_destroy
+      description: |-
+        ViewSet for tracking quiz attempts.
+        - Students can start and complete attempts.
+        - Admins can see all attempts.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz Attempt.
+        required: true
+      tags:
+      - quiz-attempts
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/quiz-attempts/{id}/complete/:
+    post:
+      operationId: quiz_attempts_complete_create
+      description: Mark an attempt as completed with a score
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Quiz Attempt.
+        required: true
+      tags:
+      - quiz-attempts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizAttempt'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttempt'
+          description: ''
+  /api/reviews/:
+    get:
+      operationId: reviews_list
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      tags:
+      - reviews
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseReview'
+          description: ''
+    post:
+      operationId: reviews_create
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      tags:
+      - reviews
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+  /api/reviews/{id}/:
+    get:
+      operationId: reviews_retrieve
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - reviews
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+    put:
+      operationId: reviews_update
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - reviews
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseReview'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+    patch:
+      operationId: reviews_partial_update
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - reviews
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseReview'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseReview'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseReview'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseReview'
+          description: ''
+    delete:
+      operationId: reviews_destroy
+      description: |-
+        ViewSet for course reviews.
+        - Anyone can see reviews.
+        - Enrolled students can create/update their own reviews.
+        - Only admins can delete reviews.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Review.
+        required: true
+      tags:
+      - reviews
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/students/:
+    get:
+      operationId: students_list
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+          description: ''
+  /api/students/{id}/:
+    get:
+      operationId: students_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Student.
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+          description: ''
+  /api/students/{student_id}/bookmarks/:
+    get:
+      operationId: students_bookmarks_list
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    post:
+      operationId: students_bookmarks_create
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+  /api/students/{student_id}/bookmarks/{id}/:
+    get:
+      operationId: students_bookmarks_retrieve
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    put:
+      operationId: students_bookmarks_update
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseBookmark'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    patch:
+      operationId: students_bookmarks_partial_update
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseBookmark'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseBookmark'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseBookmark'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseBookmark'
+          description: ''
+    delete:
+      operationId: students_bookmarks_destroy
+      description: ViewSet for students to bookmark courses.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Bookmark.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/students/{student_id}/courses/:
+    get:
+      operationId: students_courses_list
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    post:
+      operationId: students_courses_create
+      description: Student enrolls in course
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentEnrollmentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentEnrollmentCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentEnrollmentCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentEnrollmentCreate'
+          description: ''
+  /api/students/{student_id}/courses/{id}/:
+    get:
+      operationId: students_courses_retrieve
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    put:
+      operationId: students_courses_update
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    patch:
+      operationId: students_courses_partial_update
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseEnrollment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseEnrollment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseEnrollment'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+    delete:
+      operationId: students_courses_destroy
+      description: |-
+        ViewSet for managing course enrollments
+
+        Students can:
+        - Enroll in courses
+        - View their own enrollments
+        - Drop courses
+
+        Admins can:
+        - View all enrollments
+        - Manage enrollments
+      parameters:
+      - in: path
+        name: course_pk
+        schema:
+          type: integer
+        description: Course ID (from nested route)
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: integer
+        description: Student ID (from nested route)
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/students/{student_id}/courses/{id}/drop/:
+    post:
+      operationId: students_courses_drop_create
+      description: Drop a course
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Course Enrollment.
+        required: true
+      - in: path
+        name: student_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - students
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseEnrollment'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+  /api/students/{student_id}/courses/my_enrollments/:
+    get:
+      operationId: students_courses_my_enrollments_retrieve
+      description: Get current user's enrollments (student view)
+      parameters:
+      - in: path
+        name: student_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - students
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseEnrollment'
+          description: ''
+  /api/users/:
+    get:
+      operationId: users_list
+      description: Get a list of all users in the database (cached in Redis).
+      summary: List Users
+      tags:
+      - Users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDetail'
+          description: ''
+  /api/users/{id}/:
+    get:
+      operationId: users_retrieve
+      description: Get a specific user by their primary key (pk) (cached in Redis).
+      summary: Retrieve User
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+  /api/users/{id}/update/:
+    put:
+      operationId: users_update_update
+      description: Update a specific user by their primary key (pk).
+      summary: Update User
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdate'
+          description: ''
+    patch:
+      operationId: users_update_partial_update
+      description: Update a specific user by their primary key (pk).
+      summary: Update User
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdate'
+          description: ''
+  /api/users/link-child/:
+    post:
+      operationId: users_link_child_create
+      description: Link a student to a parent using the student's unique linking code.
+      summary: Link Child to Parent
+      tags:
+      - Parents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkChild'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LinkChild'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LinkChild'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+          description: ''
+  /api/users/parent/children-courses/:
+    get:
+      operationId: users_parent_children_courses_retrieve
+      description: Get a list of all courses that the parent's children are enrolled
+        in. Data is grouped by child, showing each child's course enrollments with
+        progress details.
+      summary: Get Children's Enrolled Courses
+      tags:
+      - Parents
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParentChildrenCourses'
+          description: ''
+  /api/webhook/paystack/:
+    post:
+      operationId: paystack_webhook
+      description: "\n    Handle Paystack webhook events for payment notifications.\n
+        \   \n    **Security:**\n    - All payment status updates MUST come through
+        this webhook (server-side verification)\n    - Webhook signature is validated
+        using HMAC-SHA512\n    - HTTPS is required in production\n    \n    **Supported
+        Events:**\n    - `charge.success` - Payment completed successfully\n    -
+        `charge.failed` - Payment failed\n    - `transfer.success` - Transfer completed
+        (if using payouts)\n    - `transfer.failed` - Transfer failed (if using payouts)\n
+        \   \n    **Headers Required:**\n    - `x-paystack-signature`: HMAC-SHA512
+        signature of the request body\n    \n    **Note:** This endpoint is called
+        by Paystack, not by your frontend.\n    "
+      summary: Paystack Webhook Endpoint
+      tags:
+      - Payments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: string
+                  description: Event type (e.g., charge.success, charge.failed)
+                  example: charge.success
+                data:
+                  type: object
+                  description: Event data containing payment information
+                id:
+                  type: string
+                  description: Unique event ID for idempotency
+                  example: evt_1234567890
+              required:
+              - event
+              - data
+              - id
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Webhook received and processed
+          description: Webhook received and processed successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Missing signature header
+          description: Bad request (missing signature, invalid JSON, etc.)
+        '401':
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Invalid signature
+          description: Invalid webhook signature
+        '405':
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Method not allowed
+          description: Method not allowed (only POST is accepted)
+        '500':
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Error processing webhook
+          description: Server error processing webhook
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    Category:
+      type: object
+      description: Serializer for the Category model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        courses_count:
+          type: integer
+          readOnly: true
+          title: Course count
+      required:
+      - courses_count
+      - created_at
+      - created_by
+      - id
+      - name
+      - updated_at
+      - updated_by
+    CategoryList:
+      type: object
+      description: Serializer for the Category model in list view
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          type: integer
+          readOnly: true
+        updated_by:
+          type: integer
+          readOnly: true
+        courses_count:
+          type: integer
+          readOnly: true
+          title: Course count
+      required:
+      - courses_count
+      - created_at
+      - created_by
+      - id
+      - name
+      - slug
+      - updated_at
+      - updated_by
+    Certificate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        course:
+          type: integer
+        course_details:
+          allOf:
+          - $ref: '#/components/schemas/CourseList'
+          readOnly: true
+        certificate_id:
+          type: string
+          maxLength: 100
+        issued_at:
+          type: string
+          format: date-time
+          readOnly: true
+        certificate_url:
+          type: string
+          format: uri
+          maxLength: 200
+      required:
+      - certificate_id
+      - course
+      - course_details
+      - id
+      - issued_at
+      - user
+    ChildEnrollment:
+      type: object
+      description: Serializer for a child's enrollment in a course
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        course:
+          allOf:
+          - $ref: '#/components/schemas/CourseList'
+          readOnly: true
+        student_name:
+          type: string
+          readOnly: true
+        student_email:
+          type: string
+          format: email
+          readOnly: true
+        enrolled_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        last_accessed:
+          type: string
+          format: date-time
+          readOnly: true
+        progress_percentage:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusC70Enum'
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        is_completed:
+          type: boolean
+          readOnly: true
+        total_watch_time_minutes:
+          type: integer
+          readOnly: true
+        quiz_average_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        enrollment_notes:
+          type: string
+          readOnly: true
+      required:
+      - completed_at
+      - course
+      - enrolled_at
+      - enrollment_notes
+      - id
+      - is_active
+      - is_completed
+      - last_accessed
+      - progress_percentage
+      - quiz_average_score
+      - status
+      - student_email
+      - student_name
+      - total_watch_time_minutes
+    ChildWithCourses:
+      type: object
+      description: Serializer for a child with their enrolled courses
+      properties:
+        child:
+          allOf:
+          - $ref: '#/components/schemas/UserDetail'
+          readOnly: true
+        student_id:
+          type: string
+          readOnly: true
+        current_class:
+          type: string
+          readOnly: true
+        current_school:
+          type: string
+          readOnly: true
+        enrollments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChildEnrollment'
+          readOnly: true
+        total_enrollments:
+          type: integer
+          readOnly: true
+        active_enrollments:
+          type: integer
+          readOnly: true
+        completed_enrollments:
+          type: integer
+          readOnly: true
+      required:
+      - active_enrollments
+      - child
+      - completed_enrollments
+      - current_class
+      - current_school
+      - enrollments
+      - student_id
+      - total_enrollments
+    Course:
+      type: object
+      description: Serializer for the Course model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        is_published:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/StatusA3eEnum'
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+        cover_image:
+          type: string
+          format: uri
+          title: Cover image url
+          maxLength: 200
+        cover_video:
+          type: string
+          format: uri
+          nullable: true
+          title: Cover video url
+          maxLength: 200
+        enrollment_count:
+          type: integer
+          readOnly: true
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        category:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+      required:
+      - category
+      - created_at
+      - created_by
+      - description
+      - end_date
+      - enrollment_count
+      - id
+      - price
+      - start_date
+      - title
+      - updated_at
+      - updated_by
+    CourseBookmark:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        course:
+          type: integer
+        course_details:
+          allOf:
+          - $ref: '#/components/schemas/CourseList'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - course
+      - course_details
+      - created_at
+      - id
+      - user
+    CourseEnrollment:
+      type: object
+      description: Full enrollment details
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          description: Student enrolled in the course
+        student_email:
+          type: string
+          format: email
+          readOnly: true
+        student_name:
+          type: string
+          readOnly: true
+        course:
+          type: integer
+        course_details:
+          allOf:
+          - $ref: '#/components/schemas/CourseList'
+          readOnly: true
+        enrolled_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_accessed:
+          type: string
+          format: date-time
+          readOnly: true
+        progress_percentage:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/StatusC70Enum'
+        is_completed:
+          type: boolean
+          readOnly: true
+        total_watch_time_minutes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        quiz_average_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        enrollment_notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - course
+      - course_details
+      - created_at
+      - enrolled_at
+      - id
+      - is_completed
+      - last_accessed
+      - student_email
+      - student_name
+      - updated_at
+      - user
+    CourseList:
+      type: object
+      description: Serializer for the Course model in list view
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        is_published:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/StatusA3eEnum'
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+        cover_image:
+          type: string
+          format: uri
+          title: Cover image url
+          maxLength: 200
+        enrollment_count:
+          type: integer
+          readOnly: true
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        category:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - category
+      - created_at
+      - end_date
+      - enrollment_count
+      - id
+      - price
+      - slug
+      - start_date
+      - title
+    CourseReview:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        user_details:
+          allOf:
+          - $ref: '#/components/schemas/UserDetail'
+          readOnly: true
+        course:
+          type: integer
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          description: Rating from 1 to 5
+        comment:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - course
+      - created_at
+      - id
+      - rating
+      - updated_at
+      - user
+      - user_details
+    DeleteAccount:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        password:
+          type: string
+          writeOnly: true
+          description: User password (required for self-deletion, optional for admin)
+        confirm_password:
+          type: string
+          writeOnly: true
+          description: Confirm user password (required for self-deletion, optional
+            for admin)
+      required:
+      - email
+    ForgetPassword:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+      required:
+      - email
+    GenderEnum:
+      enum:
+      - male
+      - female
+      - other
+      type: string
+      description: |-
+        * `male` - Male
+        * `female` - Female
+        * `other` - Other
+    Lesson:
+      type: object
+      description: Serializer for the Lesson model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        video_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Duration in minutes
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Order of lesson within the course (1, 2, 3, etc.)
+        is_published:
+          type: boolean
+        course:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+      required:
+      - course
+      - created_at
+      - created_by
+      - id
+      - title
+      - updated_at
+      - updated_by
+    LessonList:
+      type: object
+      description: Serializer for the Lesson model in list view
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        video_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Duration in minutes
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Order of lesson within the course (1, 2, 3, etc.)
+        is_published:
+          type: boolean
+        course:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - course
+      - created_at
+      - id
+      - title
+    LevelEnum:
+      enum:
+      - beginner
+      - intermediate
+      - advanced
+      type: string
+      description: |-
+        * `beginner` - Beginner
+        * `intermediate` - Intermediate
+        * `advanced` - Advanced
+    LinkChild:
+      type: object
+      properties:
+        linking_code:
+          type: string
+      required:
+      - linking_code
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        password:
+          type: string
+          writeOnly: true
+          description: User password
+      required:
+      - email
+      - password
+    Notification:
+      type: object
+      description: Serializer for the Notification model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        recipient_type:
+          allOf:
+          - $ref: '#/components/schemas/UserRoleEnum'
+          readOnly: true
+        notification_type:
+          allOf:
+          - $ref: '#/components/schemas/NotificationTypeEnum'
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        message:
+          type: string
+        action_url:
+          type: string
+          maxLength: 500
+        related_object_id:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        related_object_type:
+          type: string
+          maxLength: 50
+        is_read:
+          type: boolean
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        email_sent:
+          type: boolean
+        email_sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - message
+      - notification_type
+      - recipient_type
+      - title
+      - user
+    NotificationPreference:
+      type: object
+      description: Serializer for the NotificationPreference model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        email_enrollment:
+          type: boolean
+        email_payment:
+          type: boolean
+        email_course_updates:
+          type: boolean
+        email_reminders:
+          type: boolean
+        email_marketing:
+          type: boolean
+        push_enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - updated_at
+      - user
+    NotificationTypeEnum:
+      enum:
+      - enrollment
+      - payment
+      - course_update
+      - assignment
+      - quiz
+      - certificate
+      - reminder
+      - message
+      - system
+      type: string
+      description: |-
+        * `enrollment` - Course Enrollment
+        * `payment` - Payment
+        * `course_update` - Course Update
+        * `assignment` - Assignment
+        * `quiz` - Quiz
+        * `certificate` - Certificate
+        * `reminder` - Reminder
+        * `message` - Message
+        * `system` - System
+    OTPVerification:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        code:
+          type: string
+          description: 6-digit OTP code
+          maxLength: 6
+          minLength: 6
+      required:
+      - code
+      - email
+    OtpTypeEnum:
+      enum:
+      - registration
+      - password_reset
+      type: string
+      description: |-
+        * `registration` - Registration
+        * `password_reset` - Password Reset
+    ParentChildrenCourses:
+      type: object
+      description: Serializer for parent's view of all children's courses
+      properties:
+        parent_name:
+          type: string
+          readOnly: true
+        parent_email:
+          type: string
+          format: email
+          readOnly: true
+        total_children:
+          type: integer
+          readOnly: true
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChildWithCourses'
+          readOnly: true
+        total_enrollments:
+          type: integer
+          readOnly: true
+        total_active_enrollments:
+          type: integer
+          readOnly: true
+        total_completed_enrollments:
+          type: integer
+          readOnly: true
+      required:
+      - children
+      - parent_email
+      - parent_name
+      - total_active_enrollments
+      - total_children
+      - total_completed_enrollments
+      - total_enrollments
+    PatchedCategory:
+      type: object
+      description: Serializer for the Category model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        courses_count:
+          type: integer
+          readOnly: true
+          title: Course count
+    PatchedCourse:
+      type: object
+      description: Serializer for the Course model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        is_published:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/StatusA3eEnum'
+        level:
+          $ref: '#/components/schemas/LevelEnum'
+        cover_image:
+          type: string
+          format: uri
+          title: Cover image url
+          maxLength: 200
+        cover_video:
+          type: string
+          format: uri
+          nullable: true
+          title: Cover video url
+          maxLength: 200
+        enrollment_count:
+          type: integer
+          readOnly: true
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        category:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+    PatchedCourseBookmark:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        course:
+          type: integer
+        course_details:
+          allOf:
+          - $ref: '#/components/schemas/CourseList'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedCourseEnrollment:
+      type: object
+      description: Full enrollment details
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          description: Student enrolled in the course
+        student_email:
+          type: string
+          format: email
+          readOnly: true
+        student_name:
+          type: string
+          readOnly: true
+        course:
+          type: integer
+        course_details:
+          allOf:
+          - $ref: '#/components/schemas/CourseList'
+          readOnly: true
+        enrolled_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_accessed:
+          type: string
+          format: date-time
+          readOnly: true
+        progress_percentage:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        status:
+          $ref: '#/components/schemas/StatusC70Enum'
+        is_completed:
+          type: boolean
+          readOnly: true
+        total_watch_time_minutes:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        quiz_average_score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        enrollment_notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedCourseReview:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        user_details:
+          allOf:
+          - $ref: '#/components/schemas/UserDetail'
+          readOnly: true
+        course:
+          type: integer
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          description: Rating from 1 to 5
+        comment:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedLesson:
+      type: object
+      description: Serializer for the Lesson model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        video_url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        duration:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Duration in minutes
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          description: Order of lesson within the course (1, 2, 3, etc.)
+        is_published:
+          type: boolean
+        course:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+    PatchedNotificationPreference:
+      type: object
+      description: Serializer for the NotificationPreference model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        email_enrollment:
+          type: boolean
+        email_payment:
+          type: boolean
+        email_course_updates:
+          type: boolean
+        email_reminders:
+          type: boolean
+        email_marketing:
+          type: boolean
+        push_enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedPayment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        reference:
+          type: string
+          readOnly: true
+        metadata:
+          nullable: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedQuiz:
+      type: object
+      description: Serializer for the Quiz model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        passing_score:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Passing score percentage
+        time_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Time limit in minutes (0 = no limit)
+        is_published:
+          type: boolean
+        lesson:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+    PatchedQuizAttempt:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        student_name:
+          type: string
+          readOnly: true
+        quiz:
+          type: integer
+        quiz_title:
+          type: string
+          readOnly: true
+        score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        time_spent_minutes:
+          type: integer
+          readOnly: true
+          description: Time used to complete the quiz in minutes
+        is_passed:
+          type: boolean
+          readOnly: true
+    PatchedUserUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/UserRoleEnum'
+        username:
+          type: string
+          readOnly: true
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        is_verified:
+          type: boolean
+          readOnly: true
+          title: Email verified
+        profile:
+          $ref: '#/components/schemas/Profile'
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        reference:
+          type: string
+          readOnly: true
+        metadata:
+          nullable: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - created_at
+      - email
+      - id
+      - reference
+      - status
+      - updated_at
+    PaymentStatusEnum:
+      enum:
+      - pending
+      - completed
+      - failed
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `completed` - Completed
+        * `failed` - Failed
+    PaymentVerify:
+      type: object
+      properties:
+        reference:
+          type: string
+      required:
+      - reference
+    Profile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        bio:
+          type: string
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+        address:
+          type: string
+        city:
+          type: string
+          maxLength: 100
+        state:
+          type: string
+          maxLength: 100
+        zip_code:
+          type: string
+          maxLength: 20
+        country:
+          type: string
+          maxLength: 100
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        gender:
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+      required:
+      - date_joined
+      - id
+      - last_login
+    Quiz:
+      type: object
+      description: Serializer for the Quiz model
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        passing_score:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Passing score percentage
+        time_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Time limit in minutes (0 = no limit)
+        is_published:
+          type: boolean
+        lesson:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        updated_by:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+      required:
+      - created_at
+      - created_by
+      - id
+      - lesson
+      - title
+      - updated_at
+      - updated_by
+    QuizAttempt:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        student_name:
+          type: string
+          readOnly: true
+        quiz:
+          type: integer
+        quiz_title:
+          type: string
+          readOnly: true
+        score:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        time_spent_minutes:
+          type: integer
+          readOnly: true
+          description: Time used to complete the quiz in minutes
+        is_passed:
+          type: boolean
+          readOnly: true
+      required:
+      - completed_at
+      - id
+      - is_passed
+      - quiz
+      - quiz_title
+      - started_at
+      - student_name
+      - time_spent_minutes
+      - user
+    QuizList:
+      type: object
+      description: Serializer for the Quiz model in list view
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        passing_score:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Passing score percentage
+        time_limit:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Time limit in minutes (0 = no limit)
+        is_published:
+          type: boolean
+        lesson:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - lesson
+      - title
+    ResendOTP:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        otp_type:
+          allOf:
+          - $ref: '#/components/schemas/OtpTypeEnum'
+          default: registration
+          description: |-
+            Type of OTP to resend: 'registration' or 'password_reset'
+
+            * `registration` - Registration
+            * `password_reset` - Password Reset
+      required:
+      - email
+    ResetPassword:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+        code:
+          type: string
+          description: 6-digit OTP code
+          maxLength: 6
+          minLength: 6
+        new_password:
+          type: string
+          writeOnly: true
+          description: New password
+          minLength: 8
+        confirm_password:
+          type: string
+          writeOnly: true
+          description: Confirm new password
+          minLength: 8
+      required:
+      - code
+      - confirm_password
+      - email
+      - new_password
+    StatusA3eEnum:
+      enum:
+      - active
+      - inactive
+      type: string
+      description: |-
+        * `active` - Active
+        * `inactive` - Inactive
+    StatusC70Enum:
+      enum:
+      - active
+      - completed
+      - dropped
+      - suspended
+      type: string
+      description: |-
+        * `active` - Active
+        * `completed` - Completed
+        * `dropped` - Dropped
+        * `suspended` - Suspended
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        user_details:
+          allOf:
+          - $ref: '#/components/schemas/UserDetail'
+          readOnly: true
+        student_id:
+          type: string
+          nullable: true
+          maxLength: 20
+        current_class:
+          type: string
+          nullable: true
+          maxLength: 200
+        current_school:
+          type: string
+          nullable: true
+          maxLength: 200
+      required:
+      - id
+      - user
+      - user_details
+    StudentEnrollmentCreate:
+      type: object
+      description: Serializer for student to request enrollment
+      properties:
+        course:
+          type: integer
+        enrollment_notes:
+          type: string
+      required:
+      - course
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        phone_number:
+          type: string
+          description: Required for registration
+          maxLength: 20
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRoleEnum'
+          default: student
+        username:
+          type: string
+          readOnly: true
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        date_joined:
+          type: string
+          format: date-time
+        student_id:
+          type: string
+          writeOnly: true
+        current_class:
+          type: string
+          writeOnly: true
+        current_school:
+          type: string
+          writeOnly: true
+        parent_id:
+          type: string
+          writeOnly: true
+        occupation:
+          type: string
+          writeOnly: true
+        relationship_to_student:
+          type: string
+          writeOnly: true
+        linking_code:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - id
+      - phone_number
+      - username
+    UserDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        phone_number:
+          type: string
+          description: Required for registration
+          maxLength: 20
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/UserRoleEnum'
+        username:
+          type: string
+          readOnly: true
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        is_verified:
+          type: boolean
+          readOnly: true
+          title: Email verified
+      required:
+      - date_joined
+      - email
+      - id
+      - is_verified
+      - username
+    UserRoleEnum:
+      enum:
+      - student
+      - parent
+      - admin
+      type: string
+      description: |-
+        * `student` - Student
+        * `parent` - Parent
+        * `admin` - Admin
+    UserUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        role:
+          $ref: '#/components/schemas/UserRoleEnum'
+        username:
+          type: string
+          readOnly: true
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+        is_verified:
+          type: boolean
+          readOnly: true
+          title: Email verified
+        profile:
+          $ref: '#/components/schemas/Profile'
+      required:
+      - date_joined
+      - email
+      - id
+      - is_verified
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from courses.models.enrollment import CourseEnrollment
 from courses.serializer.course import CourseListSerializer
 
@@ -8,6 +9,12 @@ class CourseEnrollmentSerializer(serializers.ModelSerializer):
     course_details = CourseListSerializer(source='course', read_only=True)
     student_email = serializers.EmailField(source='user.email', read_only=True)
     student_name = serializers.CharField(source='user.get_full_name', read_only=True)
+    is_completed = serializers.SerializerMethodField()
+    
+    @extend_schema_field(serializers.BooleanField())
+    def get_is_completed(self, obj) -> bool:
+        """Check if enrollment is completed"""
+        return obj.is_completed
     
     class Meta:
         model = CourseEnrollment

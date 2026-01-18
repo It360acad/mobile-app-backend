@@ -1,9 +1,27 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from courses.models.bookmark import CourseBookmark
 from courses.serializer.bookmark import CourseBookmarkSerializer
 
+@extend_schema_view(
+    list=extend_schema(parameters=[
+        OpenApiParameter('student_id', int, OpenApiParameter.PATH, description='Student ID (from nested route)'),
+    ]),
+    retrieve=extend_schema(parameters=[
+        OpenApiParameter('student_id', int, OpenApiParameter.PATH, description='Student ID (from nested route)'),
+    ]),
+    create=extend_schema(parameters=[
+        OpenApiParameter('student_id', int, OpenApiParameter.PATH, description='Student ID (from nested route)'),
+    ]),
+    update=extend_schema(parameters=[
+        OpenApiParameter('student_id', int, OpenApiParameter.PATH, description='Student ID (from nested route)'),
+    ]),
+    destroy=extend_schema(parameters=[
+        OpenApiParameter('student_id', int, OpenApiParameter.PATH, description='Student ID (from nested route)'),
+    ]),
+)
 class CourseBookmarkViewSet(viewsets.ModelViewSet):
     """
     ViewSet for students to bookmark courses.

@@ -2,12 +2,18 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from django.utils import timezone
 
 from notification.models import Notification, NotificationPreference
 from notification.serializers import NotificationSerializer, NotificationPreferenceSerializer
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter('id', int, OpenApiParameter.PATH, description='Notification ID'),
+    ]
+)
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
@@ -37,6 +43,12 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'status': 'success', 'updated': updated}, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter('notification_pk', int, OpenApiParameter.PATH, description='Notification ID'),
+        OpenApiParameter('id', int, OpenApiParameter.PATH, description='Preference ID'),
+    ]
+)
 class NotificationPreferenceViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationPreferenceSerializer
     permission_classes = [IsAuthenticated]

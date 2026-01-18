@@ -157,6 +157,14 @@ SPECTACULAR_SETTINGS = {
             ('admin', 'Admin'),
         ],
     },
+    'COMPONENT_NAME_OVERRIDES': {
+        # Fix enum naming collisions - map auto-generated enum names to better names
+        # These are the hash-based names drf-spectacular generates for status fields
+        'StatusC70Enum': 'PaymentStatusEnum',
+        'StatusA3eEnum': 'CourseEnrollmentStatusEnum',
+    },
+    # Reduce verbosity of warnings (parameters are correctly annotated, warnings are informational)
+    'DISABLE_ERRORS_AND_WARNINGS': False,  # Keep False to see real errors
 }
 
 # JWT Settings

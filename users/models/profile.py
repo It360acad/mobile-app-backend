@@ -15,7 +15,6 @@ class Profile(models.Model):
   date_joined = models.DateTimeField(auto_now_add=True, verbose_name='date joined')
   last_login = models.DateTimeField(auto_now=True, verbose_name='last login')
   address = models.TextField(blank=True, verbose_name='address')
-  phone_number = models.CharField(max_length=20, blank=True, verbose_name='phone number')
   city = models.CharField(max_length=100, blank=True, verbose_name='city')
   state = models.CharField(max_length=100, blank=True, verbose_name='state')
   zip_code = models.CharField(max_length=20, blank=True, verbose_name='zip code')

@@ -2,6 +2,7 @@
 Serializers for parent's children's course enrollments
 """
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from courses.models.enrollment import CourseEnrollment
 from courses.serializer.course import CourseListSerializer
 from users.models import Student
@@ -13,6 +14,8 @@ class ChildEnrollmentSerializer(serializers.ModelSerializer):
     course = CourseListSerializer(read_only=True)
     student_name = serializers.CharField(source='user.get_full_name', read_only=True)
     student_email = serializers.EmailField(source='user.email', read_only=True)
+    is_active = serializers.SerializerMethodField()
+    is_completed = serializers.SerializerMethodField()
     
     class Meta:
         model = CourseEnrollment
@@ -33,6 +36,16 @@ class ChildEnrollmentSerializer(serializers.ModelSerializer):
             'enrollment_notes',
         ]
         read_only_fields = fields
+    
+    @extend_schema_field(serializers.BooleanField())
+    def get_is_active(self, obj) -> bool:
+        """Check if enrollment is active"""
+        return obj.is_active
+    
+    @extend_schema_field(serializers.BooleanField())
+    def get_is_completed(self, obj) -> bool:
+        """Check if enrollment is completed"""
+        return obj.is_completed
 
 
 class ChildWithCoursesSerializer(serializers.Serializer):

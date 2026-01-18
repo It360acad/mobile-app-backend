@@ -31,12 +31,13 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
   email = models.EmailField(unique=True, blank=False, verbose_name='email address')
   password = models.CharField(max_length=128, blank=False, verbose_name='password')
+  phone_number = models.CharField(max_length=20, blank=False, default='', verbose_name='phone number', help_text='Required for registration')
   role = models.CharField(max_length=20, blank=False, verbose_name='role', choices=[ ('student', 'Student'), ('parent', 'Parent'), ('admin', 'Admin')], default='student')
   is_verified = models.BooleanField(default=False, verbose_name='email verified')
   
   # Use email as the username field
   USERNAME_FIELD = 'email'
-  REQUIRED_FIELDS = []  # No additional required fields
+  REQUIRED_FIELDS = ['phone_number']  # Required fields for createsuperuser
   
   # Use custom manager
   objects = UserManager()

@@ -57,3 +57,10 @@
 [INFO] 2026-01-18 20:29:38 | request_id=62788397-480b-441e-90f2-65c797728d04 | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/verify-otp/ | Status: 200 | Duration: 0.94s
 [INFO] 2026-01-18 20:30:28 | request_id=7ab4da97-a551-4d74-9d6a-17df10d81ff8 | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/resend-otp/ | Status: 200 | Duration: 1.86s
 [INFO] 2026-01-18 20:31:22 | request_id=a8657c23-a21f-44d1-ad1c-d5622d8e81ec | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/verify-otp/ | Status: 200 | Duration: 0.89s
+[INFO] 2026-01-18 20:46:01 | request_id=bc515878-08d8-4d10-a9bd-1d130cdd74cc | User: 127.0.0.1 | IP: 127.0.0.1 | api | GET /api/docs/ | Status: 200 | Duration: 0.74s
+[INFO] 2026-01-18 20:46:03 | request_id=34eb01e6-bbdd-436d-bfdb-360cf8043662 | User: 127.0.0.1 | IP: 127.0.0.1 | api | GET /api/schema/ | Status: 200 | Duration: 0.93s
+[INFO] 2026-01-18 21:10:26 | request_id=8ee95906-b05c-4658-a046-7233648260a6 | User: 127.0.0.1 | IP: 127.0.0.1 | api | GET /api/docs/ | Status: 200 | Duration: 0.67s
+[INFO] 2026-01-18 21:10:27 | request_id=2de25371-f843-4041-a3f5-c738475b3d56 | User: 127.0.0.1 | IP: 127.0.0.1 | api | GET /api/schema/ | Status: 500 | Duration: 0.83s
+[INFO] 2026-01-18 21:10:28 | request_id=b28411a3-742a-4a36-80c9-63f518eb69b8 | User: 127.0.0.1 | IP: 127.0.0.1 | api | GET /api/schema/ | Status: 500 | Duration: 0.98s
+[INFO] 2026-01-18 21:15:49 | request_id=b1d5bc7a-8f12-4281-8a77-5a8200823182 | User: 127.0.0.1 | IP: 127.0.0.1 | api | GET /api/docs/ | Status: 200 | Duration: 0.91s
+[INFO] 2026-01-18 21:15:50 | request_id=665152f7-1ace-4293-bac9-cb2a092be182 | User: 127.0.0.1 | IP: 127.0.0.1 | api | GET /api/schema/ | Status: 200 | Duration: 0.80s

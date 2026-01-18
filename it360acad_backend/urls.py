@@ -25,7 +25,7 @@ courses_router.register(r'lessons', LessonViewSet, basename='course-lessons')
 courses_router.register(r'enrollments', CourseEnrollmentViewSet, basename='course-enrollments')
 courses_router.register(r'reviews', CourseReviewViewSet, basename='course-reviews')
 
-# Nested router: students/{student_id}/courses (mapped to enrollments)
+# Nested router: students/{student_pk}/courses (mapped to enrollments)
 students_router = routers.NestedDefaultRouter(router, r'students', lookup='student')
 students_router.register(r'courses', CourseEnrollmentViewSet, basename='student-courses')
 students_router.register(r'bookmarks', CourseBookmarkViewSet, basename='student-bookmarks')

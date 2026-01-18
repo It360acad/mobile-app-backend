@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from users.models import User, Profile, Student, Parent
 from django.contrib.auth.hashers import make_password
 
@@ -22,12 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
     fields = [
-      'id', 'email', 'first_name', 'last_name', 'role', 'username', 'password', 'date_joined',
+      'id', 'email', 'phone_number', 'first_name', 'last_name', 'role', 'username', 'password', 'date_joined',
       'student_id', 'current_class', 'current_school',
       'parent_id', 'occupation', 'relationship_to_student', 'linking_code'
     ]
     extra_kwargs = {
       'email': {'required': True},
+      'phone_number': {'required': True},
     }
   
   def validate_role(self, value):
@@ -113,7 +115,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     model = Profile
     fields = [
       'id', 'bio', 'date_joined', 
-      'last_login', 'address', 'phone_number', 'city', 'state', 'zip_code', 
+      'last_login', 'address', 'city', 'state', 'zip_code', 
       'country', 'date_of_birth', 'gender'
     ]
     read_only_fields = ['id', 'date_joined', 'last_login']
@@ -121,22 +123,15 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 # User Serializer with Profile (for list and retrieve)
 class UserDetailSerializer(serializers.ModelSerializer):
-  profile = ProfileSerializer(read_only=True)
   username = serializers.CharField(required=False, read_only=True)
-  linking_code = serializers.SerializerMethodField()
 
   class Meta:
     model = User
     fields = [
-      'id', 'email', 'first_name', 'last_name', 'role', 'username', 
-      'date_joined', 'is_verified', 'profile', 'linking_code'
+      'id', 'email', 'phone_number', 'first_name', 'last_name', 'role', 'username', 
+      'date_joined', 'is_verified'
     ]
     read_only_fields = ['id', 'username', 'date_joined', 'is_verified']
-
-  def get_linking_code(self, obj):
-    if obj.role == 'student' and hasattr(obj, 'student_profile'):
-      return obj.student_profile.linking_code
-    return None
 
 
 # User Update Serializer (for update operations)

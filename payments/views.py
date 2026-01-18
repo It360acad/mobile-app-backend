@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.conf import settings
-from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view, OpenApiParameter
 import hmac
 import hashlib
 import json
@@ -350,13 +350,13 @@ class PaymentViewSet(viewsets.ModelViewSet):
         **Note:** Payment status is still updated via webhook, not this callback.
         ''',
         parameters=[
-            {
-                'name': 'reference',
-                'in': 'query',
-                'required': True,
-                'description': 'Payment reference from Paystack',
-                'schema': {'type': 'string'}
-            }
+            OpenApiParameter(
+                'reference',
+                str,
+                OpenApiParameter.QUERY,
+                required=True,
+                description='Payment reference from Paystack'
+            )
         ],
         responses={
             200: OpenApiResponse(
