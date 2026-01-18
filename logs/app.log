@@ -24,3 +24,10 @@ Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will 
 [INFO] 2026-01-16 12:07:55 | Tenant: N/A | User: Webhook | payments | Webhook request received from IP: 127.0.0.1
 [WARNING] 2026-01-16 12:07:55 | Tenant: N/A | User: Webhook | payments | Webhook request received over HTTP (development mode) from IP: 127.0.0.1. Note: Paystack webhooks will not work with HTTP in production.
 [ERROR] 2026-01-16 12:07:55 | Tenant: N/A | User: Webhook | payments | Webhook request missing signature header from IP: 127.0.0.1
+[INFO] 2026-01-18 20:28:34 | request_id=d74b4a26-87b6-413f-9ad6-b3a5a51002cc | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated user list cache
+[INFO] 2026-01-18 20:28:34 | request_id=d74b4a26-87b6-413f-9ad6-b3a5a51002cc | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated user list cache after creating user 53
+[INFO] 2026-01-18 20:28:34 | request_id=d74b4a26-87b6-413f-9ad6-b3a5a51002cc | User: 127.0.0.1 | IP: 127.0.0.1 | notification.signals | Notification preferences created for user: h24vivrcjv@bltiwd.com
+[INFO] 2026-01-18 20:29:38 | request_id=62788397-480b-441e-90f2-65c797728d04 | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated user list cache
+[INFO] 2026-01-18 20:29:38 | request_id=62788397-480b-441e-90f2-65c797728d04 | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated cache for updated user 53
+[INFO] 2026-01-18 20:31:22 | request_id=a8657c23-a21f-44d1-ad1c-d5622d8e81ec | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated user list cache
+[INFO] 2026-01-18 20:31:22 | request_id=a8657c23-a21f-44d1-ad1c-d5622d8e81ec | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated cache for updated user 53

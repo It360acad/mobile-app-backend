@@ -1,5 +1,10 @@
 
-
+"""
+Django LOGGING config. Best practices:
+- detailed: human-readable, good for dev and small teams.
+- json (LOG_FORMAT=json): one JSON object per line for production log aggregators
+  (ELK, Loki, CloudWatch, Datadog). Enables querying by user_id, request_id, etc.
+"""
 import os
 from pathlib import Path
 
@@ -13,6 +18,10 @@ LOGS_DIR.mkdir(exist_ok=True)
 # Try to get DEBUG from environment, default to False if not set
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+# LOG_FORMAT=json for production / log aggregators (structured, one JSON per line)
+LOG_FORMAT = os.environ.get('LOG_FORMAT', 'detailed')
+_DEFAULT_FORMATTER = 'json' if LOG_FORMAT == 'json' else 'detailed'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -25,13 +34,16 @@ LOGGING = {
     
     'formatters': {
         'detailed': {
-            'format': '[{levelname}] {asctime} | Tenant: {tenant_id} | User: {user_id} | {name} | {message}',
+            'format': '[{levelname}] {asctime} | request_id={request_id} | User: {user_display} | IP: {ip} | {name} | {message}',
             'style': '{',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
         'simple': {
             'format': '[{levelname}] {asctime} | {message}',
             'style': '{',
+        },
+        'json': {
+            '()': 'it360acad_backend.logging_filters.JsonFormatter',
         },
     },
     
@@ -40,7 +52,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'detailed',
+            'formatter': _DEFAULT_FORMATTER,
             'filters': ['tenant_context'],
         },
         
@@ -48,10 +60,10 @@ LOGGING = {
         'app_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOGS_DIR / 'app.log',
+            'filename': str(LOGS_DIR / 'app.log'),
             'maxBytes': 1024 * 1024 * 20,  # 20 MB
             'backupCount': 10,
-            'formatter': 'detailed',
+            'formatter': _DEFAULT_FORMATTER,
             'filters': ['tenant_context'],
         },
         
@@ -59,10 +71,10 @@ LOGGING = {
         'error_file': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOGS_DIR / 'errors.log',
+            'filename': str(LOGS_DIR / 'errors.log'),
             'maxBytes': 1024 * 1024 * 15,  # 15 MB
             'backupCount': 15,
-            'formatter': 'detailed',
+            'formatter': _DEFAULT_FORMATTER,
             'filters': ['tenant_context'],
         },
         
@@ -70,10 +82,10 @@ LOGGING = {
         'security_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOGS_DIR / 'security.log',
+            'filename': str(LOGS_DIR / 'security.log'),
             'maxBytes': 1024 * 1024 * 10,  # 10 MB
             'backupCount': 10,
-            'formatter': 'detailed',
+            'formatter': _DEFAULT_FORMATTER,
             'filters': ['tenant_context'],
         },
         
@@ -81,10 +93,10 @@ LOGGING = {
         'api_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOGS_DIR / 'api.log',
+            'filename': str(LOGS_DIR / 'api.log'),
             'maxBytes': 1024 * 1024 * 15,  # 15 MB
             'backupCount': 10,
-            'formatter': 'detailed',
+            'formatter': _DEFAULT_FORMATTER,
             'filters': ['tenant_context'],
         },
     },
@@ -152,7 +164,7 @@ if not DEBUG and ADMIN_EMAIL_SET:
     LOGGING['handlers']['mail_admins'] = {
         'level': 'CRITICAL',
         'class': 'django.utils.log.AdminEmailHandler',
-        'formatter': 'detailed',
+        'formatter': _DEFAULT_FORMATTER,
         'filters': ['tenant_context'],
     }
     LOGGING['loggers']['django.request']['handlers'].append('mail_admins')

@@ -393,6 +393,12 @@ if redis_url.startswith('rediss://'):
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
                 'SSL_CERT_REQS': ssl.CERT_NONE,  # Upstash uses self-signed certificates
+                'SOCKET_CONNECT_TIMEOUT': 5,  # Connection timeout in seconds
+                'SOCKET_TIMEOUT': 5,  # Socket timeout for operations (prevents hanging)
+                'CONNECTION_POOL_KWARGS': {
+                    'retry_on_timeout': True,
+                    'max_connections': 10,
+                },
             },
             'KEY_PREFIX': 'it360acad',
             'TIMEOUT': 3600,  # Default timeout: 1 hour
@@ -406,6 +412,12 @@ elif redis_url.startswith('redis://'):
             'LOCATION': cache_url,
             'OPTIONS': {
                 'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'SOCKET_CONNECT_TIMEOUT': 5,  # Connection timeout in seconds
+                'SOCKET_TIMEOUT': 5,  # Socket timeout for operations (prevents hanging)
+                'CONNECTION_POOL_KWARGS': {
+                    'retry_on_timeout': True,
+                    'max_connections': 50,
+                },
             },
             'KEY_PREFIX': 'it360acad',
             'TIMEOUT': 3600,  # Default timeout: 1 hour

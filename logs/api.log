@@ -45,3 +45,15 @@
 [INFO] 2026-01-16 12:22:07 | Tenant: N/A | User: Anonymous | api | GET /api/docs/ | Status: 200 | Duration: 0.79s
 [INFO] 2026-01-16 12:22:08 | Tenant: N/A | User: Anonymous | api | GET /api/schema/ | Status: 200 | Duration: 0.87s
 [INFO] 2026-01-16 12:23:10 | Tenant: N/A | User: Anonymous | api | POST /api/payments/ | Status: 401 | Duration: 0.00s
+[INFO] 2026-01-17 19:50:41 | Tenant: N/A | User: Anonymous | api | GET /api/docs/ | Status: 200 | Duration: 0.68s
+[INFO] 2026-01-17 19:50:53 | Tenant: N/A | User: Anonymous | api | GET /api/schema/ | Status: 200 | Duration: 1.30s
+[INFO] 2026-01-17 19:51:11 | User: Anonymous | api | GET /api/docs/ | Status: 200 | Duration: 0.90s
+[INFO] 2026-01-17 19:51:13 | User: Anonymous | api | GET /api/schema/ | Status: 200 | Duration: 0.73s
+[INFO] 2026-01-18 20:25:28 | request_id=bf4fb7af-d96c-497a-b391-f68583603854 | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/resend-otp/ | Status: 400 | Duration: 8.36s
+[INFO] 2026-01-18 20:25:47 | request_id=e194650c-3891-4b89-bf92-13f2ca7b3b26 | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/resend-otp/ | Status: 400 | Duration: 0.21s
+[INFO] 2026-01-18 20:26:54 | request_id=acd702e4-60a5-464f-acd8-9272bff88e04 | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/register/ | Status: 400 | Duration: 0.00s
+[INFO] 2026-01-18 20:27:16 | request_id=524a5b69-37fe-4a45-a6e7-88865512fcba | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/register/ | Status: 400 | Duration: 1.03s
+[INFO] 2026-01-18 20:28:46 | request_id=d74b4a26-87b6-413f-9ad6-b3a5a51002cc | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/register/ | Status: 201 | Duration: 14.52s
+[INFO] 2026-01-18 20:29:38 | request_id=62788397-480b-441e-90f2-65c797728d04 | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/verify-otp/ | Status: 200 | Duration: 0.94s
+[INFO] 2026-01-18 20:30:28 | request_id=7ab4da97-a551-4d74-9d6a-17df10d81ff8 | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/resend-otp/ | Status: 200 | Duration: 1.86s
+[INFO] 2026-01-18 20:31:22 | request_id=a8657c23-a21f-44d1-ad1c-d5622d8e81ec | User: 127.0.0.1 | IP: 127.0.0.1 | api | POST /api/auth/verify-otp/ | Status: 200 | Duration: 0.89s

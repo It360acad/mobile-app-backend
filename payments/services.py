@@ -4,6 +4,7 @@ from typing import Dict, Optional
 
 class PaystackService:
   BASE_URL = 'https://api.paystack.co'
+  REQUEST_TIMEOUT = 10  # Timeout in seconds for API calls (prevents hanging)
    
   def __init__(self):
     # Validate secret key is set
@@ -40,7 +41,7 @@ class PaystackService:
       data['metadata'] = metadata
 
     try:
-      response = requests.post(url, headers=self.header, json=data)
+      response = requests.post(url, headers=self.header, json=data, timeout=self.REQUEST_TIMEOUT)
       response.raise_for_status()
       return response.json()
     except requests.exceptions.HTTPError as e:
@@ -58,7 +59,7 @@ class PaystackService:
 
     url = f'{self.BASE_URL}/transaction/verify/{reference}'
     try:
-      response = requests.get(url, headers=self.header)
+      response = requests.get(url, headers=self.header, timeout=self.REQUEST_TIMEOUT)
       response.raise_for_status()
       return response.json()
     except requests.exceptions.HTTPError as e:
@@ -80,7 +81,7 @@ class PaystackService:
       'per_page': per_page
     }
     try:
-      response = requests.get(url, headers=self.header, params=params)
+      response = requests.get(url, headers=self.header, params=params, timeout=self.REQUEST_TIMEOUT)
       response.raise_for_status()
       return response.json()
     except requests.exceptions.HTTPError as e:
