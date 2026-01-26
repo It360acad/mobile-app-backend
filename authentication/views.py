@@ -13,6 +13,7 @@ from authentication.serializers import ForgetPasswordSerializer, ResetPasswordSe
 from authentication.models import OTP
 from django.core.mail import send_mail
 from django.conf import settings
+from notification.tasks import send_otp_email
 
 @extend_schema(
   tags=['Authentication'],
@@ -22,19 +23,19 @@ from django.conf import settings
 class UserRegisterView(CreateAPIView):
   queryset = User.objects.all() # QuerySet to get all users
   serializer_class = UserSerializer # Serializer to serialize the user data
-  permission_classes = [AllowAny] # Permission classes to allow any user to register 
+  permission_classes = [AllowAny] # Permission classes to allow any user to register
 
 
   def create(self, request, *args, **kwargs):
     serializer = self.serializer_class(data=request.data)
     serializer.is_valid(raise_exception=True)
-    
+
     # Create user (is_verified=False and is_active=True are set in serializer)
     user = serializer.save()
 
     # Generate and send OTP
     otp = OTP.create_otp(user, expiry_minutes=10)
-    
+
     # Initialize response data
     response_data = {
       'message': 'User registered successfully. Please check your email for OTP.',
@@ -43,26 +44,22 @@ class UserRegisterView(CreateAPIView):
         'email': user.email,
       },
     }
-    
-    # Send OTP via email
+
+    # Send OTP via email asynchronously using Celery
     try:
-      send_mail(
-        'OTP Verification - IT360 Academy',
-        f'Your IT360 Academy Registration OTP is: {otp.code}\n\nThis code will expire in 10 minutes.\n\nIf you did not request this code, please ignore this email.',
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        fail_silently=False
-      )
+      # Queue the email task in background
+      send_otp_email.delay(user.email, otp.code, 'verification')
       response_data['email_sent'] = True
+      response_data['message'] = 'User registered successfully. OTP has been queued for sending. Please check your email shortly.'
     except Exception as e:
       # Log the error but don't fail the request
-      print(f"Failed to send email to {user.email}: {str(e)}")
-      # For development, include OTP in response if email fails
+      print(f"Failed to queue email task for {user.email}: {str(e)}")
+      # For development, include OTP in response if email queuing fails
       # Remove this in production once email is working
       response_data['otp'] = otp.code
       response_data['email_sent'] = False
       response_data['email_error'] = str(e)
-      response_data['message'] = 'User registered successfully. Email sending failed - OTP included in response.'
+      response_data['message'] = 'User registered successfully. Email queuing failed - OTP included in response.'
     return Response(response_data, status=status.HTTP_201_CREATED)
 
 
@@ -80,13 +77,13 @@ class UserLoginView(APIView):
   def post(self, request):
     serializer = LoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    
+
     email = serializer.validated_data.get('email')
     password = serializer.validated_data.get('password')
 
     # Authenticate user
     user = authenticate(request, username=email, password=password)
-    
+
     if user is None:
       return Response(
         {'error': 'Invalid email or password'},
@@ -95,7 +92,7 @@ class UserLoginView(APIView):
 
     # Generate tokens
     refresh = RefreshToken.for_user(user)
-    
+
     return Response({
       'user': UserSerializer(user).data,
       'tokens': {
@@ -119,10 +116,10 @@ class OTPVerificationView(APIView):
   def post(self, request):
     serializer = OTPVerificationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    
+
     email = serializer.validated_data.get('email')
     code = serializer.validated_data.get('code')
-    
+
     try:
       user = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -130,36 +127,36 @@ class OTPVerificationView(APIView):
         {'error': 'User with this email does not exist'},
         status=status.HTTP_404_NOT_FOUND
       )
-    
+
     # Find the most recent unused OTP for this user
     otp = OTP.objects.filter(
       user=user,
       code=code,
       is_used=False
     ).order_by('-created_at').first()
-    
+
     if not otp:
       return Response(
         {'error': 'Invalid or expired OTP code'},
         status=status.HTTP_400_BAD_REQUEST
       )
-    
+
     # Check if OTP is valid (not expired)
     if not otp.is_valid():
       return Response(
         {'error': 'OTP code has expired. Please request a new one.'},
         status=status.HTTP_400_BAD_REQUEST
       )
-    
+
     # Verify the OTP
     if otp.verify():
       # Mark user as verified
       user.is_verified = True
       user.save()
-      
+
       # Generate tokens
       refresh = RefreshToken.for_user(user)
-      
+
       return Response({
         'message': 'Email verified successfully',
         'user': UserSerializer(user).data,
@@ -189,9 +186,9 @@ class UserForgetPasswordView(APIView):
   def post(self, request):
     serializer = self.serializer_class(data=request.data)
     serializer.is_valid(raise_exception=True)
-    
+
     email = serializer.validated_data.get('email')
-    
+
     try:
       user = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -199,36 +196,32 @@ class UserForgetPasswordView(APIView):
         {'error': 'User with this email does not exist'},
         status=status.HTTP_404_NOT_FOUND
       )
-    
+
     # Generate and send OTP for password reset
     otp = OTP.create_otp(user, expiry_minutes=15)  # 15 minutes expiry for password reset
-    
+
     # Initialize response data
     response_data = {
       'message': 'Password reset OTP has been sent to your email. Please check your inbox.',
       'email': user.email,
     }
-    
-    # Send OTP via email
+
+    # Send OTP via email asynchronously using Celery
     try:
-      send_mail(
-        'Password Reset OTP - IT360 Academy',
-        f'Your IT360 Academy Password Reset OTP is: {otp.code}\n\nThis code will expire in 15 minutes.\n\nIf you did not request a password reset, please ignore this email.',
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        fail_silently=False
-      )
+      # Queue the email task in background
+      send_otp_email.delay(user.email, otp.code, 'password_reset')
       response_data['email_sent'] = True
+      response_data['message'] = 'Password reset OTP has been queued for sending. Please check your email shortly.'
     except Exception as e:
       # Log the error but don't fail the request
-      print(f"Failed to send email to {user.email}: {str(e)}")
-      # For development, include OTP in response if email fails
+      print(f"Failed to queue email task for {user.email}: {str(e)}")
+      # For development, include OTP in response if email queuing fails
       # Remove this in production once email is working
       response_data['otp'] = otp.code
       response_data['email_sent'] = False
       response_data['email_error'] = str(e)
-      response_data['message'] = 'Password reset OTP generated. Email sending failed - OTP included in response.'
-    
+      response_data['message'] = 'Password reset OTP generated. Email queuing failed - OTP included in response.'
+
     return Response(response_data, status=status.HTTP_200_OK)
 
 
@@ -246,11 +239,11 @@ class UserResetPasswordView(APIView):
   def post(self, request):
     serializer = self.serializer_class(data=request.data)
     serializer.is_valid(raise_exception=True)
-    
+
     email = serializer.validated_data.get('email')
     code = serializer.validated_data.get('code')
     new_password = serializer.validated_data.get('new_password')
-    
+
     try:
       user = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -258,33 +251,33 @@ class UserResetPasswordView(APIView):
         {'error': 'User with this email does not exist'},
         status=status.HTTP_404_NOT_FOUND
       )
-    
+
     # Find the most recent unused OTP for this user
     otp = OTP.objects.filter(
       user=user,
       code=code,
       is_used=False
     ).order_by('-created_at').first()
-    
+
     if not otp:
       return Response(
         {'error': 'Invalid or expired OTP code'},
         status=status.HTTP_400_BAD_REQUEST
       )
-    
+
     # Check if OTP is valid (not expired)
     if not otp.is_valid():
       return Response(
         {'error': 'OTP code has expired. Please request a new one.'},
         status=status.HTTP_400_BAD_REQUEST
       )
-    
+
     # Verify the OTP
     if otp.verify():
       # Reset the password
       user.set_password(new_password)
       user.save()
-      
+
       return Response(
         {
           'message': 'Password has been reset successfully. You can now login with your new password.',
@@ -353,17 +346,17 @@ class UserEmailExistsView(APIView):
 
   def get(self, request):
     email = request.query_params.get('email') # get the email from the query params
-    
+
     if not email:
       return Response(
         {'error': 'Email parameter is required'},
         status=status.HTTP_400_BAD_REQUEST
       )
-    
+
     # Validate email format
     from django.core.validators import validate_email
     from django.core.exceptions import ValidationError
-    
+
     try:
       validate_email(email)
     except ValidationError:
@@ -371,9 +364,9 @@ class UserEmailExistsView(APIView):
         {'error': 'Invalid email format'},
         status=status.HTTP_400_BAD_REQUEST
       )
-    
+
     if User.objects.filter(email=email).exists(): # check if the email exists in the database
-      return Response({'message': 'Email Already Exist', 'exists': True}, status=status.HTTP_200_OK) # return True 
+      return Response({'message': 'Email Already Exist', 'exists': True}, status=status.HTTP_200_OK) # return True
     else: # if the email does not exist in the database
       return Response({'message': 'Email Does Not Exist', 'exists': False}, status=status.HTTP_200_OK) # return False
 
@@ -392,10 +385,10 @@ class UserResendOtpView(APIView):
   def post(self, request):
     serializer = self.serializer_class(data=request.data)
     serializer.is_valid(raise_exception=True)
-    
+
     email = serializer.validated_data.get('email')
     otp_type = serializer.validated_data.get('otp_type', 'registration')
-    
+
     try:
       user = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -403,7 +396,7 @@ class UserResendOtpView(APIView):
         {'error': 'User with this email does not exist'},
         status=status.HTTP_404_NOT_FOUND
       )
-    
+
     # Determine expiry time based on OTP type
     if otp_type == 'password_reset':
       expiry_minutes = 15
@@ -411,17 +404,17 @@ class UserResendOtpView(APIView):
     else:  # registration
       expiry_minutes = 10
       message = 'Registration OTP has been resent to your email. Please check your inbox.'
-    
+
     # Generate and send new OTP
     otp = OTP.create_otp(user, expiry_minutes=expiry_minutes)
-    
+
     # Initialize response data
     response_data = {
       'message': message,
       'email': user.email,
       'otp_type': otp_type,
     }
-    
+
     # Determine email subject and body based on OTP type
     if otp_type == 'password_reset':
       email_subject = 'Password Reset OTP - IT360 Academy'
@@ -429,27 +422,23 @@ class UserResendOtpView(APIView):
     else:
       email_subject = 'OTP Verification - IT360 Academy'
       email_body = f'Your IT360 Academy Registration OTP is: {otp.code}\n\nThis code will expire in 10 minutes.\n\nIf you did not request this code, please ignore this email.'
-    
-    # Send OTP via email
+
+    # Send OTP via email asynchronously using Celery
     try:
-      send_mail(
-        email_subject,
-        email_body,
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        fail_silently=False
-      )
+      # Queue the email task in background
+      send_otp_email.delay(user.email, otp.code, otp_type)
       response_data['email_sent'] = True
+      response_data['message'] = f'{otp_type.replace("_", " ").title()} OTP has been queued for sending. Please check your email shortly.'
     except Exception as e:
       # Log the error but don't fail the request
-      print(f"Failed to send email to {user.email}: {str(e)}")
-      # For development, include OTP in response if email fails
+      print(f"Failed to queue email task for {user.email}: {str(e)}")
+      # For development, include OTP in response if email queuing fails
       # Remove this in production once email is working
       response_data['otp'] = otp.code
       response_data['email_sent'] = False
       response_data['email_error'] = str(e)
-      response_data['message'] = f'{otp_type.replace("_", " ").title()} OTP generated. Email sending failed - OTP included in response.'
-    
+      response_data['message'] = f'{otp_type.replace("_", " ").title()} OTP generated. Email queuing failed - OTP included in response.'
+
     return Response(response_data, status=status.HTTP_200_OK)
 
 
@@ -466,18 +455,18 @@ class UserDeleteAccountView(APIView):
 
     def post(self, request):
         serializer = self.serializer_class(
-            data=request.data, 
+            data=request.data,
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
-        
+
         result = serializer.delete_account()
-        
+
         return Response(result, status=status.HTTP_200_OK)
 
 
 
-# User Profile View 
+# User Profile View
 @extend_schema(
   tags=['Authentication'],
   summary="Get User Profile",

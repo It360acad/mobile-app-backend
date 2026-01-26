@@ -31,3 +31,42 @@ Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will 
 [INFO] 2026-01-18 20:29:38 | request_id=62788397-480b-441e-90f2-65c797728d04 | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated cache for updated user 53
 [INFO] 2026-01-18 20:31:22 | request_id=a8657c23-a21f-44d1-ad1c-d5622d8e81ec | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated user list cache
 [INFO] 2026-01-18 20:31:22 | request_id=a8657c23-a21f-44d1-ad1c-d5622d8e81ec | User: 127.0.0.1 | IP: 127.0.0.1 | users | Invalidated cache for updated user 53
+[WARNING] 2026-01-26 12:54:09 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[INFO] 2026-01-26 12:55:09 | request_id=N/A | User: Anonymous | IP: N/A | notification | Test task executed successfully: Sync test from management command
+[WARNING] 2026-01-26 12:55:09 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[INFO] 2026-01-26 12:55:09 | request_id=N/A | User: Anonymous | IP: N/A | celery.app.trace | Task notification.tasks.test_celery_connection[3bb5eba3-8612-4a17-8598-1659e0201921] succeeded in 0.03349503600020398s: {'message': 'Sync test from management command', 'timestamp': '2026-01-26T12:55:09.962316+00:00', 'status': 'success', 'worker_received': True}
+[WARNING] 2026-01-26 12:55:18 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[WARNING] 2026-01-26 12:55:58 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[WARNING] 2026-01-26 12:57:00 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[WARNING] 2026-01-26 12:57:43 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[WARNING] 2026-01-26 12:58:16 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[WARNING] 2026-01-26 13:00:09 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[INFO] 2026-01-26 13:00:20 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test@example.com for verification
+[WARNING] 2026-01-26 13:01:40 | request_id=N/A | User: Anonymous | IP: N/A | celery.backends.redis | 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[INFO] 2026-01-26 13:01:43 | request_id=N/A | User: Anonymous | IP: N/A | notification | Test task executed successfully: Test from async OTP script
+[INFO] 2026-01-26 13:01:45 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test@example.com for verification
+[INFO] 2026-01-26 13:01:47 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test@example.com for password_reset
+[INFO] 2026-01-26 13:01:55 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to user@example.com for verification
+[INFO] 2026-01-26 13:01:57 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test0@example.com for verification
+[INFO] 2026-01-26 13:01:59 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test2@example.com for verification
+[INFO] 2026-01-26 13:01:59 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test1@example.com for verification
+[INFO] 2026-01-26 13:02:01 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test3@example.com for verification
+[INFO] 2026-01-26 13:02:01 | request_id=N/A | User: Anonymous | IP: N/A | notification | OTP email sent successfully to test4@example.com for verification

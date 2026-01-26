@@ -17,3 +17,216 @@ you should set broker_connection_retry_on_startup to True.
 [2026-01-10 12:22:25,029: INFO/MainProcess] mingle: searching for neighbors
 [2026-01-10 12:22:30,331: INFO/MainProcess] mingle: all alone
 [2026-01-10 12:22:39,592: INFO/MainProcess] celery@whoami ready.
+[2026-01-26 12:54:53,017: WARNING/MainProcess] 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[2026-01-26 12:54:54,167: WARNING/MainProcess] /home/whoami/Documents/Builds/django/it360acad/it360acad_backend/.venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2026-01-26 12:54:58,943: INFO/MainProcess] Connected to rediss://default:**@apparent-labrador-33734.upstash.io:6379//
+[2026-01-26 12:54:58,946: WARNING/MainProcess] /home/whoami/Documents/Builds/django/it360acad/it360acad_backend/.venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2026-01-26 12:55:01,775: INFO/MainProcess] mingle: searching for neighbors
+[2026-01-26 12:55:06,540: INFO/MainProcess] mingle: all alone
+[2026-01-26 12:55:13,665: INFO/MainProcess] celery@whoami ready.
+[2026-01-26 12:57:36,829: WARNING/MainProcess] 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[2026-01-26 12:57:38,007: WARNING/MainProcess] /home/whoami/Documents/Builds/django/it360acad/it360acad_backend/.venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2026-01-26 12:57:40,869: INFO/MainProcess] Connected to rediss://default:**@apparent-labrador-33734.upstash.io:6379//
+[2026-01-26 12:57:40,871: WARNING/MainProcess] /home/whoami/Documents/Builds/django/it360acad/it360acad_backend/.venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2026-01-26 12:57:43,699: INFO/MainProcess] mingle: searching for neighbors
+[2026-01-26 12:57:48,222: INFO/MainProcess] mingle: all alone
+[2026-01-26 12:57:54,365: INFO/MainProcess] celery@whoami ready.
+[2026-01-26 12:59:59,705: WARNING/MainProcess] 
+Setting ssl_cert_reqs=CERT_NONE when connecting to redis means that celery will not validate the identity of the redis broker when connecting. This leaves you vulnerable to man in the middle attacks.
+
+[2026-01-26 13:00:00,828: WARNING/MainProcess] /home/whoami/Documents/Builds/django/it360acad/it360acad_backend/.venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2026-01-26 13:00:04,327: INFO/MainProcess] Connected to rediss://default:**@apparent-labrador-33734.upstash.io:6379//
+[2026-01-26 13:00:04,329: WARNING/MainProcess] /home/whoami/Documents/Builds/django/it360acad/it360acad_backend/.venv/lib/python3.13/site-packages/celery/worker/consumer/consumer.py:508: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2026-01-26 13:00:05,652: INFO/MainProcess] mingle: searching for neighbors
+[2026-01-26 13:00:10,477: INFO/MainProcess] mingle: all alone
+[2026-01-26 13:00:18,063: INFO/MainProcess] celery@whoami ready.
+[2026-01-26 13:00:18,753: INFO/MainProcess] Task notification.tasks.send_otp_email[a1b7777e-54c7-4790-bbd7-bfde6baeb221] received
+[2026-01-26 13:00:20,541: WARNING/ForkPoolWorker-6] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test@example.com
+Date: Mon, 26 Jan 2026 13:00:20 +0000
+Message-ID: <176943242053.24510.16329155396256462772@whoami>
+
+Your IT360 Academy Registration OTP is: 123456
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:00:20,541: WARNING/ForkPoolWorker-6] -------------------------------------------------------------------------------
+[2026-01-26 13:00:20,967: INFO/ForkPoolWorker-6] Task notification.tasks.send_otp_email[a1b7777e-54c7-4790-bbd7-bfde6baeb221] succeeded in 1.9955726609996418s: True
+[2026-01-26 13:01:42,805: INFO/MainProcess] Task notification.tasks.test_celery_connection[95d01dae-7e54-45b4-a371-f253d17f12b9] received
+[2026-01-26 13:01:43,446: WARNING/ForkPoolWorker-6] ✅ Celery test task executed! Message: Test from async OTP script
+[2026-01-26 13:01:43,899: INFO/ForkPoolWorker-6] Task notification.tasks.test_celery_connection[95d01dae-7e54-45b4-a371-f253d17f12b9] succeeded in 0.8807646939994811s: {'message': 'Test from async OTP script', 'timestamp': '2026-01-26T13:01:43.445899+00:00', 'status': 'success', 'worker_received': True}
+[2026-01-26 13:01:44,749: INFO/MainProcess] Task notification.tasks.send_otp_email[deb5e062-2d38-4322-a36b-61dbae184ed4] received
+[2026-01-26 13:01:45,390: WARNING/ForkPoolWorker-6] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test@example.com
+Date: Mon, 26 Jan 2026 13:01:45 +0000
+Message-ID: <176943250538.24510.14676631938284554131@whoami>
+
+Your IT360 Academy Registration OTP is: 123456
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:01:45,390: WARNING/ForkPoolWorker-6] -------------------------------------------------------------------------------
+[2026-01-26 13:01:45,863: INFO/ForkPoolWorker-6] Task notification.tasks.send_otp_email[deb5e062-2d38-4322-a36b-61dbae184ed4] succeeded in 0.8980065089999698s: True
+[2026-01-26 13:01:46,301: INFO/MainProcess] Task notification.tasks.send_otp_email[330804cd-7645-4a1c-979f-c246b2fd9e10] received
+[2026-01-26 13:01:47,153: WARNING/ForkPoolWorker-6] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: Password Reset OTP - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test@example.com
+Date: Mon, 26 Jan 2026 13:01:47 +0000
+Message-ID: <176943250715.24510.14780348896480980182@whoami>
+
+Your IT360 Academy Password Reset OTP is: 123456
+
+This code will expire in 15 minutes.
+
+If you did not request a password reset, please ignore this email.
+[2026-01-26 13:01:47,153: WARNING/ForkPoolWorker-6] -------------------------------------------------------------------------------
+[2026-01-26 13:01:47,576: INFO/ForkPoolWorker-6] Task notification.tasks.send_otp_email[330804cd-7645-4a1c-979f-c246b2fd9e10] succeeded in 0.8540645019993462s: True
+[2026-01-26 13:01:55,090: INFO/MainProcess] Task notification.tasks.send_otp_email[a592a2a5-b800-4a34-bb55-370eb32f4264] received
+[2026-01-26 13:01:55,769: WARNING/ForkPoolWorker-6] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: user@example.com
+Date: Mon, 26 Jan 2026 13:01:55 +0000
+Message-ID: <176943251576.24510.18315623621060884747@whoami>
+
+Your IT360 Academy Registration OTP is: 685019
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:01:55,770: WARNING/ForkPoolWorker-6] -------------------------------------------------------------------------------
+[2026-01-26 13:01:56,195: INFO/ForkPoolWorker-6] Task notification.tasks.send_otp_email[a592a2a5-b800-4a34-bb55-370eb32f4264] succeeded in 0.8985277259998838s: True
+[2026-01-26 13:01:56,642: INFO/MainProcess] Task notification.tasks.send_otp_email[097967bf-f753-49ff-ac01-8aaa2733b338] received
+[2026-01-26 13:01:57,273: WARNING/ForkPoolWorker-6] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test0@example.com
+Date: Mon, 26 Jan 2026 13:01:57 +0000
+Message-ID: <176943251727.24510.8041319103832158670@whoami>
+
+Your IT360 Academy Registration OTP is: 123450
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:01:57,273: WARNING/ForkPoolWorker-6] -------------------------------------------------------------------------------
+[2026-01-26 13:01:57,499: INFO/MainProcess] Task notification.tasks.send_otp_email[5a39cea3-f383-4411-8882-61b56453b3c9] received
+[2026-01-26 13:01:57,722: INFO/ForkPoolWorker-6] Task notification.tasks.send_otp_email[097967bf-f753-49ff-ac01-8aaa2733b338] succeeded in 0.8711597769997752s: True
+[2026-01-26 13:01:58,581: INFO/MainProcess] Task notification.tasks.send_otp_email[447e7289-0d6f-486e-87ef-263ded6115ed] received
+[2026-01-26 13:01:59,227: WARNING/ForkPoolWorker-6] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test2@example.com
+Date: Mon, 26 Jan 2026 13:01:59 +0000
+Message-ID: <176943251922.24510.10155889471267721354@whoami>
+
+Your IT360 Academy Registration OTP is: 123452
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:01:59,228: WARNING/ForkPoolWorker-6] -------------------------------------------------------------------------------
+[2026-01-26 13:01:59,234: WARNING/ForkPoolWorker-7] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test1@example.com
+Date: Mon, 26 Jan 2026 13:01:59 +0000
+Message-ID: <176943251923.24511.13905500579378454777@whoami>
+
+Your IT360 Academy Registration OTP is: 123451
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:01:59,235: WARNING/ForkPoolWorker-7] -------------------------------------------------------------------------------
+[2026-01-26 13:01:59,445: INFO/MainProcess] Task notification.tasks.send_otp_email[12f8ea86-da18-4605-bb5f-e3804efd1c97] received
+[2026-01-26 13:01:59,672: INFO/ForkPoolWorker-6] Task notification.tasks.send_otp_email[447e7289-0d6f-486e-87ef-263ded6115ed] succeeded in 0.886171132000527s: True
+[2026-01-26 13:01:59,682: INFO/ForkPoolWorker-7] Task notification.tasks.send_otp_email[5a39cea3-f383-4411-8882-61b56453b3c9] succeeded in 1.9582499269999971s: True
+[2026-01-26 13:02:00,696: INFO/MainProcess] Task notification.tasks.send_otp_email[c7cf3e08-cf51-429e-b4ad-eb4b0fd145d7] received
+[2026-01-26 13:02:01,152: WARNING/ForkPoolWorker-8] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test3@example.com
+Date: Mon, 26 Jan 2026 13:02:01 +0000
+Message-ID: <176943252114.24512.3072471464307462563@whoami>
+
+Your IT360 Academy Registration OTP is: 123453
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:02:01,153: WARNING/ForkPoolWorker-8] -------------------------------------------------------------------------------
+[2026-01-26 13:02:01,585: WARNING/ForkPoolWorker-6] Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Subject: OTP Verification - IT360 Academy
+From: noreply@it360academy.com.ng
+To: test4@example.com
+Date: Mon, 26 Jan 2026 13:02:01 +0000
+Message-ID: <176943252158.24510.8012612748406982919@whoami>
+
+Your IT360 Academy Registration OTP is: 123454
+
+This code will expire in 10 minutes.
+
+If you did not request this code, please ignore this email.
+[2026-01-26 13:02:01,585: WARNING/ForkPoolWorker-6] -------------------------------------------------------------------------------
+[2026-01-26 13:02:01,931: INFO/ForkPoolWorker-8] Task notification.tasks.send_otp_email[12f8ea86-da18-4605-bb5f-e3804efd1c97] succeeded in 2.2752642710001965s: True
+[2026-01-26 13:02:02,042: INFO/ForkPoolWorker-6] Task notification.tasks.send_otp_email[c7cf3e08-cf51-429e-b4ad-eb4b0fd145d7] succeeded in 0.9061882240002888s: True

@@ -87,16 +87,16 @@ if REDIS_URL and (REDIS_URL.startswith('rediss://') or REDIS_URL.startswith('red
     # Parse Redis URL for channels (use database 2)
     import re
     from urllib.parse import urlparse
-    
+
     # Parse the Redis URL
     parsed = urlparse(REDIS_URL.replace('rediss://', 'redis://'))
-    
+
     # Extract components
     host = parsed.hostname
     port = parsed.port or 6379
     password = parsed.password
     db = 2  # Use database 2 for channels
-    
+
     # Build connection config
     if REDIS_URL.startswith('rediss://'):
         # For TLS connections
@@ -115,7 +115,7 @@ if REDIS_URL and (REDIS_URL.startswith('rediss://') or REDIS_URL.startswith('red
         }
         if password:
             connection_config['password'] = password
-    
+
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -228,7 +228,7 @@ if os.environ.get('DB_URL'):
         conn_health_checks=False,  # Disable health checks to prevent timeouts
         ssl_require=True
     )
-    
+
     # Ensure database name is set (Supabase default is 'postgres' if not specified)
     if not db_config.get('NAME'):
         db_url = os.environ.get('DB_URL', '')
@@ -240,7 +240,7 @@ if os.environ.get('DB_URL'):
         else:
             # Default to 'postgres' for Supabase if not found
             db_config['NAME'] = 'postgres'
-    
+
     # Add connection timeout options to prevent hanging
     db_config.setdefault('OPTIONS', {})
     # Merge existing OPTIONS if any
@@ -249,7 +249,7 @@ if os.environ.get('DB_URL'):
         **existing_options,
         'connect_timeout': 10,  # 10 second connection timeout
     }
-    
+
     DATABASES = {
         'default': db_config
     }
@@ -379,10 +379,11 @@ CELERY_WORKER_SEND_TASK_EVENTS = True
 CELERY_TASK_SEND_SENT_EVENT = True
 
 # Task routing (optional - for future use with multiple queues)
-CELERY_TASK_ROUTES = {
-    'notification.tasks.*': {'queue': 'notifications'},
-    # Add more routes as needed for other apps
-}
+# Disable task routing to use default queue for all tasks
+# CELERY_TASK_ROUTES = {
+#     'notification.tasks.*': {'queue': 'notifications'},
+#     # Add more routes as needed for other apps
+# }
 
 # Django Cache Configuration (using Redis/Upstash)
 # Use the same Redis connection as Celery, but with a different database number
@@ -437,8 +438,8 @@ else:
         }
     }
 
-# Logging Configuration
-from .logger.Logger import LOGGING
+# Logging Configuration - Production Optimized
+from .logger.ProductionLogger import LOGGING
 
 
 # PAYMENT SETTINGS
@@ -453,20 +454,20 @@ if not DEBUG:
             "SECRET_KEY must be set in production! "
             "Set SECRET_KEY environment variable with a secure random value."
         )
-    
+
     # Validate Paystack keys
     if not PAYSTACK_SECRET_KEY:
         raise ValueError(
             "PAYSTACK_SECRET_KEY must be set in production! "
             "Set PAYSTACK_SECRET_KEY environment variable."
         )
-    
+
     if not PAYSTACK_PUBLIC_KEY:
         raise ValueError(
             "PAYSTACK_PUBLIC_KEY must be set in production! "
             "Set PAYSTACK_PUBLIC_KEY environment variable."
         )
-    
+
     # Warn if keys look insecure (too short or contain common patterns)
     if len(SECRET_KEY) < 50:
         import warnings
@@ -474,7 +475,7 @@ if not DEBUG:
             "SECRET_KEY appears to be too short. Use a longer, randomly generated key.",
             UserWarning
         )
-    
+
     if PAYSTACK_SECRET_KEY and len(PAYSTACK_SECRET_KEY) < 20:
         import warnings
         warnings.warn(
@@ -486,6 +487,6 @@ else:
     if SECRET_KEY == 'django-insecure-dev-key-change-in-production':
         # Only warn in development if explicitly needed
         pass  # Suppressed: expected in development
-    
+
     # Suppress PAYSTACK key warnings in development - they're expected to be missing
     # Payment features will fail gracefully if keys are not set
